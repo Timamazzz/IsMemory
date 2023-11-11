@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'post_office',
     'corsheaders',
-    'main_app'
 ]
 
 MIDDLEWARE = [
@@ -169,7 +168,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'main_app.CustomUser'
+AUTH_USER_MODEL = 'users_app.CustomUser'
 
 '''EMAIL_BACKEND = 'post_office.EmailBackend'
 DEFAULT_FROM_EMAIL = 'info@bel-mail.ru'
