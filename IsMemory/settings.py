@@ -41,6 +41,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'post_office',
     'corsheaders',
+    'users_app',
+    'locations_app',
+    'plots_app',
+    'deceased_app',
+    'docs_app'
 ]
 
 MIDDLEWARE = [
@@ -86,10 +91,10 @@ DATABASES = {
             'sql_mode': 'ALLOW_INVALID_DATES',
             'charset': 'utf8mb4',
         },
-        'NAME': 'bik31ProcessTaskDb',
+        'NAME': 'IsMemoryDataBase',
         'USER': 'itcomsqluser',
         'PASSWORD': 'CR0504slpot!a',
-        'HOST': 'localhost',
+        'HOST': 'ismemory-db-1',
         'PORT': '3306',
     }
 }
@@ -158,10 +163,14 @@ USE_TZ = True
 MEDIA_URL = 'media/'
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 FRONTEND_BUILD_DIR = BASE_DIR.parent / 'cladb'
-STATICFILES_DIRS = [
-    os.path.join(FRONTEND_BUILD_DIR, "build", "static"),
-]
+
+if os.path.exists(FRONTEND_BUILD_DIR):
+    STATICFILES_DIRS = [
+        os.path.join(FRONTEND_BUILD_DIR, "build", "static"),
+    ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

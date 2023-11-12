@@ -2,17 +2,14 @@ version: '3'
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-    volumes:
-      - .:/app
-    environment:
-      - DJANGO_SETTINGS_MODULE=IsMemory.settings.production
 
   db:
     image: mysql:latest
@@ -21,5 +18,8 @@ services:
       MYSQL_DATABASE: IsMemoryDataBase
       MYSQL_USER: itcomsqluser
       MYSQL_PASSWORD: CR0504slpot!a
-    ports:
-      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

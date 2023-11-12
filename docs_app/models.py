@@ -5,8 +5,7 @@ from plots_app.models import CemeteryPlot
 
 # Create your models here.
 class CemeteryDoc(models.Model):
-    cemetery = models.ForeignKey(Cemetery, null=True, blank=True,
-                                 related_name='', on_delete=models.CASCADE)
+    cemetery = models.ForeignKey(Cemetery, null=True, blank=True, on_delete=models.CASCADE)
     file = models.FileField("Файл договора", null=True, blank=True)
     uploaded_at = models.DateTimeField("Дата загрузки", auto_now_add=True, null=True,
                                        blank=True)

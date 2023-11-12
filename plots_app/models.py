@@ -39,7 +39,7 @@ class CemeteryPlot(models.Model):
     class Meta:
         verbose_name = 'Участок'
         verbose_name_plural = 'Участки'
-        app_label = 'main_app'
+        app_label = 'plots_app'
 
     def __str__(self):
         return 'Участок'
