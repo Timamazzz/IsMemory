@@ -179,7 +179,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users_app.CustomUser'
 
-'''EMAIL_BACKEND = 'post_office.EmailBackend'
+EMAIL_BACKEND = 'post_office.EmailBackend'
 DEFAULT_FROM_EMAIL = 'info@bel-mail.ru'
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
@@ -188,4 +188,4 @@ EMAIL_HOST = 'smtps.dashasender.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = '89205731783@mail.ru'
 # EMAIL_HOST_PASSWORD = 'Astra1988!'
-EMAIL_HOST_PASSWORD = 'd0583b8b07be826de4da838a26c60cd5'''
+EMAIL_HOST_PASSWORD = 'd0583b8b07be826de4da838a26c60cd5'
