@@ -1,5 +1,4 @@
-import random
-import string
+import secrets
 
 from django.conf import settings
 from post_office import mail
@@ -25,14 +24,17 @@ class UserViewSet(CustomModelViewSet):
     def reset_password(self, request, pk=None):
         user = self.get_object()
         email = request.data.get('email')
-        new_password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+
+        new_password = secrets.token_urlsafe(8)
+
         user.set_unusable_password()
-        user.save()
         user.set_password(new_password)
         user.save()
+
         subject = 'Сброс пароля'
         message = f'Ваш новый пароль: {new_password}'
         html_message = f'Ваш новый пароль: {new_password}'
+
         mail.send(
             email,
             settings.DEFAULT_FROM_EMAIL,
@@ -41,4 +43,8 @@ class UserViewSet(CustomModelViewSet):
             html_message=html_message,
             priority='now'
         )
-        return Response({}, status=status.HTTP_200_OK)
+
+        serialized_user = UserRetrieveSerializer(user)
+
+        return Response({'user': serialized_user.data, 'message': 'Password reset successfully'},
+                        status=status.HTTP_200_OK)
