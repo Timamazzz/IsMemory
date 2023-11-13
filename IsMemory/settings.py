@@ -162,7 +162,7 @@ MEDIA_URL = 'media/'
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-FRONTEND_BUILD_DIR = BASE_DIR.parent / 'cladb'
+FRONTEND_BUILD_DIR = BASE_DIR.parent / 'belmemorial'
 
 if os.path.exists(FRONTEND_BUILD_DIR):
     STATICFILES_DIRS = [
