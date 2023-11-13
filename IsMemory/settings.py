@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'post_office',
     'corsheaders',
+    'django_filters',
     'users_app',
     'locations_app',
     'deceased_app',
@@ -119,6 +120,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 SIMPLE_JWT = {

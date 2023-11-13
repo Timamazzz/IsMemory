@@ -45,7 +45,7 @@ class Cemetery(models.Model):
 
 class CemeteryPlot(models.Model):
     # cadastral = models.CharField("Кадастровый номер", max_length=255, null=True, blank=True)
-    cemetery = models.ForeignKey(Cemetery, on_delete=models.CASCADE, verbose_name="Кладбище", null=True, blank=True)
+    cemetery = models.ForeignKey(Cemetery, on_delete=models.CASCADE, verbose_name="Кладбище", related_name='plots', null=True, blank=True)
     plot_number = models.CharField("Номер участка", max_length=255, null=True, blank=True)
     sector = models.CharField("Сектор", max_length=255, null=True, blank=True)
     row = models.CharField("Ряд", max_length=255, null=True, blank=True)

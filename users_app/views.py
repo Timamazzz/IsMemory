@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from users_app.models import CustomUser
-from users_app.serializers.user_serialzers import UserSerializer, UserRetrieveSerializer, UserCreateSerializer, \
+from users_app.serializers.user_serializers import UserSerializer, UserRetrieveSerializer, UserCreateSerializer, \
     UserResetPasswordSerializer
 
 
