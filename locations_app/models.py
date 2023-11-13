@@ -13,7 +13,7 @@ class Municipality(models.Model):
         app_label = 'locations_app'
 
     def __str__(self):
-        return self.name or "Название"
+        return self.name or "Муниципальное образование"
 
 
 class Cemetery(models.Model):
@@ -40,7 +40,7 @@ class Cemetery(models.Model):
         app_label = 'locations_app'
 
     def __str__(self):
-        return self.name or "Название"
+        return self.name or "Кладбище"
 
 
 class CemeteryPlot(models.Model):
@@ -80,4 +80,4 @@ class CemeteryPlot(models.Model):
         app_label = 'locations_app'
 
     def __str__(self):
-        return 'Участок'
+        return self.plot_number or 'Участок'
