@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'users_app',
     'locations_app',
-    'plots_app',
     'deceased_app',
     'docs_app'
 ]
@@ -80,7 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'IsMemory.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -98,7 +96,6 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -156,7 +153,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -170,7 +166,6 @@ if os.path.exists(FRONTEND_BUILD_DIR):
     STATICFILES_DIRS = [
         os.path.join(FRONTEND_BUILD_DIR, "build", "static"),
     ]
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

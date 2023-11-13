@@ -1,5 +1,5 @@
 from django.db import models
-from plots_app.models import CemeteryPlot
+from locations_app.models import CemeteryPlot
 
 
 # Create your models here.

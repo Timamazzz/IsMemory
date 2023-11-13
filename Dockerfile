@@ -7,6 +7,8 @@ WORKDIR /app
 
 COPY requirements.txt /app/
 
+RUN apt-get update && apt-get install -y wait-for-it
+
 RUN pip install -r requirements.txt
 
 COPY . /app/

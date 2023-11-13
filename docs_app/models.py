@@ -1,6 +1,5 @@
 from django.db import models
-from locations_app.models import Cemetery
-from plots_app.models import CemeteryPlot
+from locations_app.models import Cemetery, CemeteryPlot
 
 
 # Create your models here.
