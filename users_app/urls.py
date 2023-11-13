@@ -6,7 +6,7 @@ from users_app import views
 from users_app.views import UserViewSet
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r'', UserViewSet)
 
 urlpatterns = [
 
