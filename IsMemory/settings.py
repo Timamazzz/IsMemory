@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'IsMemoryDataBase',
         'USER': 'itcomsqluser',
         'PASSWORD': 'CR0504slpot!a',
-        'HOST': 'ismemory-db-1',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
