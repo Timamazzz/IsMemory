@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 class CustomOptionsMetadata(SimpleMetadata):
     def determine_metadata(self, request, view):
+        print('determine_metadata')
         metadata = super().determine_metadata(request, view)
 
         serializer_list = getattr(view, 'serializer_list', {})
@@ -21,6 +22,7 @@ class CustomOptionsMetadata(SimpleMetadata):
         return metadata
 
     def get_serializer_info(self, serializer):
+        print('get_serializer_info')
         fields = OrderedDict([
             (field_name, self.get_field_info(field))
             for field_name, field in serializer.fields.items()
@@ -33,6 +35,7 @@ class CustomOptionsMetadata(SimpleMetadata):
         return fields
 
     def get_field_info(self, field):
+        print('get_field_info')
         field_info = OrderedDict()
         field_info['type'] = self.label_lookup[field]
         field_info['required'] = getattr(field, 'required', False)
@@ -53,6 +56,13 @@ class CustomOptionsMetadata(SimpleMetadata):
         elif getattr(field, 'fields', None):
             field_info['children'] = self.get_serializer_info(field)
 
+        print('field', field)
+        print('field_info.get(read_only)', field_info.get('read_only'))
+        print('isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField))', isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)))
+        print('hasattr(field, choices)', hasattr(field, 'choices'))
+
+        print('1', not field_info.get('read_only'))
+        print('2', (isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or hasattr(field, 'choices')))
         if not field_info.get('read_only') and \
                 (isinstance(field, (
                 serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
