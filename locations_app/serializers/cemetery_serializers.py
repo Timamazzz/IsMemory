@@ -33,3 +33,10 @@ class CemeteryTotalSerializer(serializers.Serializer):
     cemetery_plots_free = serializers.ReadOnlyField()
     cemetery_plots_occupied = serializers.ReadOnlyField()
     cemetery_plots_inventory = serializers.ReadOnlyField()
+
+
+class CemeteryCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Cemetery
+        fields = '__all__'
