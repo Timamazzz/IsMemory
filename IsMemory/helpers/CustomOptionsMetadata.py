@@ -53,10 +53,7 @@ class CustomOptionsMetadata(SimpleMetadata):
         elif getattr(field, 'fields', None):
             field_info['children'] = self.get_serializer_info(field)
 
-        if (not field_info.get('read_only') and
-                isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField,
-                                   serializers.PrimaryKeyRelatedField)) and
-                hasattr(field, 'choices')):
+        if not field_info.get('read_only') and hasattr(field, 'choices'):
             field_info['choices'] = [
                 {
                     'value': choice_value,

@@ -42,9 +42,6 @@ class CemeteryRetrieveSerializer(serializers.ModelSerializer):
 
 
 class CemeteryCreateSerializer(serializers.ModelSerializer):
-    municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=True,
-                                                      allow_null=False,
-                                                      label="Муниципальное образование")
 
     class Meta:
         model = Cemetery
