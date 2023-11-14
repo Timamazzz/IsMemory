@@ -49,3 +49,4 @@ class CemeteryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cemetery
         fields = '__all__'
+        depth = 1
