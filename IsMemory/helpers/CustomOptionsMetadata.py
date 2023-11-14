@@ -53,6 +53,7 @@ class CustomOptionsMetadata(SimpleMetadata):
         elif getattr(field, 'fields', None):
             field_info['children'] = self.get_serializer_info(field)
 
+        print('field', field)
         if (not field_info.get('read_only') or
                 isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField,
                                    serializers.PrimaryKeyRelatedField)) and
