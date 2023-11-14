@@ -63,7 +63,7 @@ class CustomOptionsMetadata(SimpleMetadata):
 
         print('1', not field_info.get('read_only'))
         print('2', (isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or hasattr(field, 'choices')))
-        if not field_info.get('read_only') and \
+        if (not field_info.get('read_only')) and \
                 (isinstance(field, (
                 serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
                 hasattr(field, 'choices')):
