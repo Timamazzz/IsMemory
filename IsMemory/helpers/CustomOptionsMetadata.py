@@ -55,7 +55,7 @@ class CustomOptionsMetadata(SimpleMetadata):
 
         if (not field_info.get('read_only') and
                 isinstance(field, (serializers.RelatedField, serializers.ManyRelatedField,
-                                       serializers.PrimaryKeyRelatedField)) and
+                                   serializers.PrimaryKeyRelatedField)) and
                 hasattr(field, 'choices')):
             field_info['choices'] = [
                 {
