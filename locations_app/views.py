@@ -5,7 +5,7 @@ from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
 from locations_app.models import Cemetery
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
-    CemeteryCreateSerializer
+    CemeteryCreateSerializer, CemeteryRetrieveSerializer
 from django.db.models import Count, Case, When, IntegerField
 
 
@@ -16,6 +16,7 @@ class CemeteryViewSet(CustomModelViewSet):
     serializer_list = {
         'list': CemeteryListSerializer,
         'create': CemeteryCreateSerializer,
+        'retrieve': CemeteryRetrieveSerializer,
     }
 
     permission_classes = [permissions.IsAuthenticated]
