@@ -4,6 +4,10 @@ from locations_app.models import Cemetery, Municipality
 
 
 class CemeterySerializer(serializers.ModelSerializer):
+    municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=True,
+                                                      allow_null=False,
+                                                      label="Муниципальное образование")
+
     class Meta:
         model = Cemetery
         fields = '__all__'
@@ -42,10 +46,13 @@ class CemeteryRetrieveSerializer(serializers.ModelSerializer):
 
 
 class CemeteryCreateSerializer(serializers.ModelSerializer):
-    municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=True,
-                                                      allow_null=False,
-                                                      label="Муниципальное образование")
+    class Meta:
+        model = Cemetery
+        fields = '__all__'
+        depth = 1
 
+
+class CemeteryUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cemetery
         fields = '__all__'
