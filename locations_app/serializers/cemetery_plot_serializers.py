@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from deceased_app.serializers.deceased_serializers import DeceasedFromCemeteryPlotSerializer
 from locations_app.models import CemeteryPlot
 
 
@@ -9,7 +10,7 @@ class CemeteryPlotSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CemeteryPlotListSerializer(serializers.ModelSerializer):
+class CemeteryPlotListSerializer(CemeteryPlotSerializer):
     municipality = serializers.CharField(source='micro_district.municipality.name', read_only=True,
                                          label="Муниципальное образование")
     type = serializers.CharField(source='get_type_display', read_only=True, label="Тип")
@@ -20,3 +21,9 @@ class CemeteryPlotListSerializer(serializers.ModelSerializer):
         model = CemeteryPlot
         fields = ('id', 'cemetery', 'municipality', 'type', 'plot_number', 'sector', 'row', 'burial',
                   'place', 'status')
+
+
+class CemeteryPlotTabsSerializer(serializers.Serializer):
+    cemetery_plot = CemeteryPlotSerializer(many=False)
+    deceased = DeceasedFromCemeteryPlotSerializer(many=True)
+

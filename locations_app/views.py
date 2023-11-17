@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
 from locations_app.models import Cemetery, CemeteryPlot
-from locations_app.serializers.cemetery_plot_serializers import CemeteryPlotSerializer, CemeteryPlotListSerializer
+from locations_app.serializers.cemetery_plot_serializers import CemeteryPlotSerializer, CemeteryPlotListSerializer, \
+    CemeteryPlotTabsSerializer
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer
 from django.db.models import Count, Case, When, IntegerField
@@ -37,10 +38,11 @@ class CemeteryViewSet(CustomModelViewSet):
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        serializer = CemeteryListSerializer(queryset, many=True)
-        response_data = {'count': queryset.count(), 'cemeteries': serializer.data}
+        page = self.paginate_queryset(queryset)
+        serializer = CemeteryListSerializer(page, many=True) if page else CemeteryListSerializer(queryset, many=True)
 
-        return Response(response_data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data) if page else Response(serializer.data,
+                                                                                  status=status.HTTP_200_OK)
 
 
 class CemeteryPlotViewSet(CustomModelViewSet):
@@ -48,6 +50,15 @@ class CemeteryPlotViewSet(CustomModelViewSet):
     serializer_class = CemeteryPlotSerializer
     serializer_list = {
         'list': CemeteryPlotListSerializer,
+        'tabs': CemeteryPlotTabsSerializer,
     }
 
-    #permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
+                                                                                                         many=True)
+        return self.get_paginated_response(serializer.data) if page else Response(serializer.data,
+                                                                                  status=status.HTTP_200_OK)
