@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from deceased_app.models import Deceased
 from deceased_app.serializers.deceased_serializers import DeceasedFromCemeteryPlotSerializer
 from locations_app.models import CemeteryPlot
 
@@ -30,6 +29,17 @@ class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
         fields = '__all__'
 
 
-class CemeteryPlotUpdateSerializer(serializers.Serializer):
-    cemetery_plot = CemeteryPlotSerializer(many=False)
-    deceased = DeceasedFromCemeteryPlotSerializer(many=True)
+class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
+    deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
+
+    class Meta:
+        model = CemeteryPlot
+        fields = '__all__'
+
+
+class CemeteryPlotUpdateSerializer(CemeteryPlotSerializer):
+    deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
+
+    class Meta:
+        model = CemeteryPlot
+        fields = '__all__'

@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
 from locations_app.models import Cemetery, CemeteryPlot
-from locations_app.serializers.cemetery_plot_serializers import CemeteryPlotSerializer, CemeteryPlotListSerializer, \
-    CemeteryPlotUpdateSerializer, CemeteryPlotCreateSerializer
+from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSerializer, CemeteryPlotListSerializer,
+                                                                 CemeteryPlotCreateSerializer,
+                                                                 CemeteryPlotRetrieveSerializer,
+                                                                 CemeteryPlotUpdateSerializer)
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer
 from django.db.models import Count, Case, When, IntegerField
@@ -52,6 +54,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'list': CemeteryPlotListSerializer,
         'create': CemeteryPlotCreateSerializer,
         'update': CemeteryPlotUpdateSerializer,
+        'retrieve': CemeteryPlotRetrieveSerializer,
     }
 
     permission_classes = [permissions.IsAuthenticated]
@@ -63,3 +66,8 @@ class CemeteryPlotViewSet(CustomModelViewSet):
                                                                                                          many=True)
         return self.get_paginated_response(serializer.data) if page else Response(serializer.data,
                                                                                   status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

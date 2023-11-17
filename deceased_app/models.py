@@ -4,7 +4,8 @@ from locations_app.models import CemeteryPlot
 
 # Create your models here.
 class Deceased(models.Model):
-    cemetery_plot = models.ForeignKey(CemeteryPlot, null=True, blank=True, on_delete=models.CASCADE)
+    cemetery_plot = models.ForeignKey(CemeteryPlot, null=True, blank=True, on_delete=models.CASCADE,
+                                      related_name='cemetery_plot_set')
     birth_date = models.DateField("Дата рождения", null=True, blank=True)
     death_date = models.DateField("Дата смерти", null=True, blank=True)
     burial_date = models.DateField("Дата захоронения", null=True, blank=True)
