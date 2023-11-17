@@ -54,7 +54,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'update': CemeteryPlotUpdateSerializer,
     }
 
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
