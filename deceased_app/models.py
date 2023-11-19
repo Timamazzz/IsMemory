@@ -22,4 +22,8 @@ class Deceased(models.Model):
         app_label = 'deceased_app'
 
     def __str__(self):
-        return self.first_name + self.last_name + self.patronymic
+        if self.first_name or self.last_name or self.patronymic:
+            return f"{self.first_name or ''} {self.last_name or ''} {self.patronymic or ''}".strip()
+        else:
+            return 'Усопший без имени, но с добрым сердцем'
+
