@@ -2,10 +2,10 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="ebe8c050-f716-477b-b210-0927a9c6654a" name="root200">
-        <fileTransfer accessType="SFTP" host="51.250.126.124" port="22" sshConfigId="7a39c9ac-71fd-4817-b6d9-be97f190831f" sshConfig="master20@51.250.126.124:22 key" keyPair="true">
+      <webServer id="36e8e195-30da-4922-bfe6-293fe65e56ba" name="IsMemoryServer">
+        <fileTransfer accessType="SFTP" host="51.250.126.124" port="22" sshConfigId="22055e49-1e25-45c9-a987-bde5a028c55b" sshConfig="master20@51.250.126.124:22 key" keyPair="true">
           <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
         </fileTransfer>
       </webServer>
