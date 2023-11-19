@@ -16,3 +16,10 @@ class DeceasedFromCemeteryPlotSerializer(DeceasedSerializer):
     class Meta:
         model = Deceased
         fields = '__all__'
+
+
+class DeceasedCreateSerializer(DeceasedSerializer):
+
+    class Meta:
+        model = Deceased
+        exclude = ['id', 'cemetery_plot']
