@@ -25,10 +25,11 @@ class CemeteryViewSet(CustomModelViewSet):
         'update': CemeteryUpdateSerializer,
         'retrieve': CemeteryRetrieveSerializer,
         'map': CemeteryMapSerializer,
-        'filter_map': CemeteryMapFilterSerializer
+        'filter_map': CemeteryMapFilterSerializer,
+        'filter': MicroDistrictFilterSerializers,
     }
 
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         queryset = Cemetery.objects.annotate(
@@ -67,7 +68,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'retrieve': CemeteryPlotRetrieveSerializer,
     }
 
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset()).order_by('-id')

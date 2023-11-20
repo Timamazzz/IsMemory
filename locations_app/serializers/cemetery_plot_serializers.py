@@ -12,7 +12,7 @@ class CemeteryPlotSerializer(serializers.ModelSerializer):
 
 
 class CemeteryPlotListSerializer(CemeteryPlotSerializer):
-    municipality = serializers.CharField(source='micro_district.municipality.name', read_only=True,
+    municipality = serializers.CharField(source='cemetery.municipality.name', read_only=True,
                                          label="Муниципальное образование")
     type = serializers.CharField(source='get_type_display', read_only=True, label="Тип")
     status = serializers.CharField(source='get_status_display', read_only=True, label="Статус")
