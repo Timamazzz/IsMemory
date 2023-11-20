@@ -40,7 +40,7 @@ class CemeteryViewSet(CustomModelViewSet):
             cemetery_plots_inventory=Count(Case(When(plots__status=CemeteryPlotStatusEnum.INVENTORY.name, then=1),
                                                 output_field=IntegerField())),
         )
-        return queryset
+        return queryset.order_by('id')
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
