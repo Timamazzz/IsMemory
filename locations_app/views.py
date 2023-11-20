@@ -4,14 +4,14 @@ from rest_framework.decorators import action
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
+from locations_app.filters import CemeteryFilter, CemeteryMapFilterSerializer, CemeteryFilterSerializer
 from locations_app.models import Cemetery, CemeteryPlot
 from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSerializer, CemeteryPlotListSerializer,
                                                                  CemeteryPlotCreateSerializer,
                                                                  CemeteryPlotRetrieveSerializer,
                                                                  CemeteryPlotUpdateSerializer)
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
-    CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer, \
-    CemeteryMapFilterSerializer, CemeteryFilterSerializers
+    CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer
 from django.db.models import Count, Case, When, IntegerField
 
 
@@ -19,6 +19,8 @@ from django.db.models import Count, Case, When, IntegerField
 class CemeteryViewSet(CustomModelViewSet):
     queryset = Cemetery.objects.all()
     serializer_class = CemeterySerializer
+    filterset_class = CemeteryFilter
+
     serializer_list = {
         'list': CemeteryListSerializer,
         'create': CemeteryCreateSerializer,
@@ -26,7 +28,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'retrieve': CemeteryRetrieveSerializer,
         'map': CemeteryMapSerializer,
         'filter_map': CemeteryMapFilterSerializer,
-        'filter': CemeteryFilterSerializers,
+        'filter': CemeteryFilter,
     }
 
     permission_classes = [permissions.IsAuthenticated]

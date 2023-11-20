@@ -133,28 +133,3 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_vacant_plots_count(obj):
         return CemeteryPlot.objects.filter(cemetery=obj, type=CemeteryPlotTypeEnum.VACANT.name).count()
-
-
-class CemeteryMapFilterSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(
-        choices=[(enum.name, enum.value) for enum in CemeteryPlotStatusEnum],
-        required=False,
-        label="Статус"
-    )
-    type = serializers.ChoiceField(
-        choices=[(enum.name, enum.value) for enum in CemeteryPlotTypeEnum],
-        required=False,
-        label="Категория"
-    )
-
-    class Meta:
-        fields = ("status", "type",)
-
-
-class CemeteryFilterSerializers(serializers.Serializer):
-    name = serializers.CharField(required=False, label="Наименование кладбища")
-    municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=False,
-                                                      label="Муниципальное образование")
-
-    class Meta:
-        fields = ('name', 'municipality')
