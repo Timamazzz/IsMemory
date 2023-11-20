@@ -83,7 +83,6 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
 
     def get_cemetery_plots(self, obj):
         request = self.context.get('request')
-        print('context:', self.context)
         if request:
             statuses = request.query_params.get('status', None)
             types = request.query_params.get('type', None)

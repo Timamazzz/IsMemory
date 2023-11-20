@@ -1,6 +1,6 @@
 from rest_framework import status, permissions
-from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
@@ -53,7 +53,6 @@ class CemeteryViewSet(CustomModelViewSet):
     @action(detail=True, methods=['GET'])
     def map(self, request, pk=None):
         cemetery = self.get_object()
-
         serializer = CemeteryMapSerializer(cemetery, context={'request': request})
         return Response(serializer.data)
 
