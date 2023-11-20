@@ -1,6 +1,7 @@
 from django.db.models import Q
 from rest_framework import serializers
 
+from locations_app.enums import CemeteryPlotStatusEnum, CemeteryPlotTypeEnum
 from locations_app.models import Cemetery, Municipality, CemeteryPlot
 
 
@@ -101,3 +102,19 @@ class CemeteryMapSerializer(CemeterySerializer):
             cemetery_plots = cemetery_plots.filter(status_filters, type_filters)
 
         return CemeteryMapSerializer(cemetery_plots, many=True).data
+
+
+class CemeteryMapFilterSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(
+        choices=[(enum.name, enum.value) for enum in CemeteryPlotStatusEnum],
+        required=False,
+        label="Статус"
+    )
+    type = serializers.ChoiceField(
+        choices=[(enum.name, enum.value) for enum in CemeteryPlotTypeEnum],
+        required=False,
+        label="Категория"
+    )
+
+    class Meta:
+        fields = ("status", "type",)
