@@ -28,7 +28,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'retrieve': CemeteryRetrieveSerializer,
         'map': CemeteryMapSerializer,
         'filter_map': CemeteryMapFilterSerializer,
-        'filter': CemeteryFilter,
+        'filter': CemeteryFilterSerializer,
     }
 
     permission_classes = [permissions.IsAuthenticated]
