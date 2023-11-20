@@ -70,7 +70,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
     # permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.filter_queryset(self.get_queryset()).order_by('-id')
         page = self.paginate_queryset(queryset)
         serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
                                                                                                          many=True)
