@@ -19,7 +19,8 @@ class DeceasedFromCemeteryPlotSerializer(DeceasedSerializer):
         fields = '__all__'
 
     def get_deceased_choices(self, obj):
-        return [(deceased.id, str(deceased)) for deceased in Deceased.objects.all()]
+        choices = [{'value': deceased.id, 'display_name': str(deceased)} for deceased in Deceased.objects.all()]
+        return choices
 
 
 class DeceasedCreateSerializer(DeceasedSerializer):
