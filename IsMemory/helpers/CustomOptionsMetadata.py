@@ -53,13 +53,10 @@ class CustomOptionsMetadata(SimpleMetadata):
         elif getattr(field, 'fields', None):
             field_info['children'] = self.get_serializer_info(field)
 
-        print('field', field)
         if (not field_info.get('read_only')) and \
                 (isinstance(field, (
                 serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
                 hasattr(field, 'choices')):
-            print('choices', hasattr(field, 'choices'))
-            print('field.choices', field.choices.items())
 
             field_info['choices'] = [
                 {
