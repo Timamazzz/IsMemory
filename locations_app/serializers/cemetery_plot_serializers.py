@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from deceased_app.serializers.deceased_serializers import DeceasedFromCemeteryPlotSerializer
 from locations_app.models import CemeteryPlot
-
+from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 class CemeteryPlotSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,7 +37,7 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
         fields = '__all__'
 
 
-class CemeteryPlotUpdateSerializer(CemeteryPlotSerializer):
+class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
 
     class Meta:
