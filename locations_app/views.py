@@ -28,7 +28,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'filter_map': CemeteryMapFilterSerializer
     }
 
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         queryset = Cemetery.objects.annotate(
