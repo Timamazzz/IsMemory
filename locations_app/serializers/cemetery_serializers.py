@@ -149,3 +149,12 @@ class CemeteryMapFilterSerializer(serializers.Serializer):
 
     class Meta:
         fields = ("status", "type",)
+
+
+class CemeteryFilterSerializers(serializers.Serializer):
+    name = serializers.CharField(required=False, label="Наименование кладбища")
+    municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=False,
+                                                      label="Муниципальное образование")
+
+    class Meta:
+        fields = ('name', 'municipality')

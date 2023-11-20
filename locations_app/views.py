@@ -11,7 +11,7 @@ from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSer
                                                                  CemeteryPlotUpdateSerializer)
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer, \
-    CemeteryMapFilterSerializer
+    CemeteryMapFilterSerializer, CemeteryFilterSerializers
 from django.db.models import Count, Case, When, IntegerField
 
 
@@ -26,7 +26,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'retrieve': CemeteryRetrieveSerializer,
         'map': CemeteryMapSerializer,
         'filter_map': CemeteryMapFilterSerializer,
-        'filter': MicroDistrictFilterSerializers,
+        'filter': CemeteryFilterSerializers,
     }
 
     permission_classes = [permissions.IsAuthenticated]
