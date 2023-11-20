@@ -113,26 +113,25 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
 
             return CemeteryMapSerializer(cemetery_plots, many=True).data
 
-
     @staticmethod
     def get_for_free_plots_count(obj):
-        return CemeteryPlot.objects.filter(cemetery__id=obj, status=CemeteryPlotStatusEnum.FREE.name).count()
+        return CemeteryPlot.objects.filter(cemetery=obj, status=CemeteryPlotStatusEnum.FREE.name).count()
 
     @staticmethod
     def get_for_occupied_plots_count(obj):
-        return CemeteryPlot.objects.filter(cemetery__id=obj, status=CemeteryPlotStatusEnum.OCCUPIED.name).count()
+        return CemeteryPlot.objects.filter(cemetery=obj, status=CemeteryPlotStatusEnum.OCCUPIED.name).count()
 
     @staticmethod
     def get_for_inventory_plots_count(obj):
-        return CemeteryPlot.objects.filter(cemetery__id=obj, status=CemeteryPlotStatusEnum.INVENTORY.name).count()
+        return CemeteryPlot.objects.filter(cemetery=obj, status=CemeteryPlotStatusEnum.INVENTORY.name).count()
 
     @staticmethod
     def get_burial_plots_count(obj):
-        return CemeteryPlot.objects.filter(cemetery__id=obj, type=CemeteryPlotTypeEnum.BURIAL.name).count()
+        return CemeteryPlot.objects.filter(cemetery=obj, type=CemeteryPlotTypeEnum.BURIAL.name).count()
 
     @staticmethod
     def get_vacant_plots_count(obj):
-        return CemeteryPlot.objects.filter(cemetery__id=obj, type=CemeteryPlotTypeEnum.VACANT.name).count()
+        return CemeteryPlot.objects.filter(cemetery=obj, type=CemeteryPlotTypeEnum.VACANT.name).count()
 
 
 class CemeteryMapFilterSerializer(serializers.Serializer):
