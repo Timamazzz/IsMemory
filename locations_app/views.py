@@ -1,4 +1,5 @@
 from rest_framework import status, permissions
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
@@ -9,7 +10,7 @@ from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSer
                                                                  CemeteryPlotRetrieveSerializer,
                                                                  CemeteryPlotUpdateSerializer)
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
-    CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer
+    CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer
 from django.db.models import Count, Case, When, IntegerField
 
 
@@ -22,6 +23,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'create': CemeteryCreateSerializer,
         'update': CemeteryUpdateSerializer,
         'retrieve': CemeteryRetrieveSerializer,
+        'map': CemeteryMapSerializer,
     }
 
     permission_classes = [permissions.IsAuthenticated]
@@ -45,6 +47,13 @@ class CemeteryViewSet(CustomModelViewSet):
 
         return self.get_paginated_response(serializer.data) if page else Response(serializer.data,
                                                                                   status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['GET'])
+    def map(self, request, pk=None):
+        cemetery = self.get_object()
+
+        serializer = CemeteryMapSerializer(cemetery, context={'request': request})
+        return Response(serializer.data)
 
 
 class CemeteryPlotViewSet(CustomModelViewSet):
