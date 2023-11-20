@@ -20,10 +20,10 @@ class CemeteryListSerializer(CemeterySerializer):
         label='Муниципальное образование'
     )
 
-    cemetery_plots_count = serializers.ReadOnlyField()
-    cemetery_plots_free = serializers.ReadOnlyField()
-    cemetery_plots_occupied = serializers.ReadOnlyField()
-    cemetery_plots_inventory = serializers.ReadOnlyField()
+    cemetery_plots_count = serializers.ReadOnlyField(label='Общее количество участков на кладбище')
+    cemetery_plots_free = serializers.ReadOnlyField(label='Количество свободных участков на кладбище')
+    cemetery_plots_occupied = serializers.ReadOnlyField(label='Количество занятых участков на кладбище')
+    cemetery_plots_inventory = serializers.ReadOnlyField(label='Количество участков в инвентаризации на кладбище')
 
     class Meta:
         model = Cemetery
