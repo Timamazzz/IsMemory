@@ -81,7 +81,6 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'coordinates', 'cemetery_plots', 'for_free_plots_count', 'for_occupied_plots_count',
                   'for_inventory_plots_count', 'burial_plots_count', 'vacant_plots_count']
 
-    @staticmethod
     def get_cemetery_plots(self, obj):
         request = self.context.get('request')
         print('context:', self.context)
