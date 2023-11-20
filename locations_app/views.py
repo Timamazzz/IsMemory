@@ -4,7 +4,8 @@ from rest_framework.decorators import action
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
-from locations_app.filters import CemeteryFilter, CemeteryMapFilterSerializer, CemeteryFilterSerializer
+from locations_app.filters import CemeteryFilter, CemeteryMapFilterSerializer, CemeteryFilterSerializer, \
+    CemeteryPlotFilter, CemeteryPlotFilterSerializers
 from locations_app.models import Cemetery, CemeteryPlot
 from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSerializer, CemeteryPlotListSerializer,
                                                                  CemeteryPlotCreateSerializer,
@@ -63,11 +64,13 @@ class CemeteryViewSet(CustomModelViewSet):
 class CemeteryPlotViewSet(CustomModelViewSet):
     queryset = CemeteryPlot.objects.all()
     serializer_class = CemeteryPlotSerializer
+    filterset_class = CemeteryPlotFilter
     serializer_list = {
         'list': CemeteryPlotListSerializer,
         'create': CemeteryPlotCreateSerializer,
         'update': CemeteryPlotUpdateSerializer,
         'retrieve': CemeteryPlotRetrieveSerializer,
+        'filter': CemeteryPlotFilterSerializers
     }
 
     permission_classes = [permissions.IsAuthenticated]
