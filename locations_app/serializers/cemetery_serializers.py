@@ -74,7 +74,7 @@ class CemeteryMapSerializer(CemeterySerializer):
         fields = ['id', 'name', 'coordinates', 'cemetery_plots']
 
     def get_cemetery_plots(self, obj):
-        request = self.context['request']
+        request = self.context.get('request')
         statuses = request.query_params.get('status', None)
         types = request.query_params.get('type', None)
 
