@@ -12,7 +12,7 @@ class DeceasedSerializer(serializers.ModelSerializer):
 
 class DeceasedFromCemeteryPlotSerializer(DeceasedSerializer):
     id = serializers.ChoiceField(choices=[(obj.id, str(obj)) for obj in Deceased.objects.all()])
-    deceased_choices = serializers.SerializerMethodField()
+    deceased_choices = serializers.SerializerMethodField(read_only=False)
 
     class Meta:
         model = Deceased
