@@ -12,18 +12,14 @@ class DeceasedSerializer(serializers.ModelSerializer):
 
 class DeceasedFromCemeteryPlotSerializer(DeceasedSerializer):
     id = serializers.ChoiceField(choices=[(obj.id, str(obj)) for obj in Deceased.objects.all()])
-    deceased_choices = serializers.SerializerMethodField(read_only=False)
 
     class Meta:
         model = Deceased
         fields = '__all__'
 
-    def get_deceased_choices(self, obj):
-        choices = [
-            {"value": deceased.id, "display_name": str(deceased)}
-            for deceased in Deceased.objects.all()
-        ]
-        return {"type": "choice", "required": False, "read_only": False, "label": "Deceased choices yuas", "choices": choices}
+    def __init__(self, *args, **kwargs):
+        super(DeceasedFromCemeteryPlotSerializer, self).__init__(*args, **kwargs)
+        self.fields['id'].choices = [(obj.id, str(obj)) for obj in Deceased.objects.all()]
 
 
 class DeceasedCreateSerializer(DeceasedSerializer):
