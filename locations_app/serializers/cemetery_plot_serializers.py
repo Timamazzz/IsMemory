@@ -49,4 +49,4 @@ class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
 class CemeteryPlotMapSerializer(serializers.ModelSerializer):
     class Meta:
         model = CemeteryPlot
-        fields = ['id', 'name', 'coordinates', 'status', 'type']
+        fields = ['id', 'plot_number', 'coordinates', 'status', 'type']
