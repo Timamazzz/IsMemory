@@ -134,7 +134,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ['https://belreestr.ru']
+CSRF_TRUSTED_ORIGINS = ['https://belmemorial.ru']
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
