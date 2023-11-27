@@ -17,6 +17,6 @@ class DeceasedViewSet(CustomModelViewSet):
         'create': DeceasedCreateSerializer,
         'filter': DeceasedFilterSerializer
     }
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     filterset_class = DeceasedFilter
 
