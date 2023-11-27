@@ -36,7 +36,3 @@ class DeceasedFilterSerializer(serializers.Serializer):
                                                        label="Кладбище")
 
     cemetery_plot_number = filters.CharFilter(required=False, label='Номер участка')
-
-    class Meta:
-        model = Deceased
-        fields = ['first_name', 'last_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot', 'cemetery_plot_number']
