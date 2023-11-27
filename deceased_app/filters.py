@@ -16,9 +16,12 @@ class DeceasedFilter(filters.FilterSet):
     cemetery_plot = filters.CharFilter(field_name="cemetery_plot__cemetery__id", lookup_expr='exact',
                                        label='Кладбище')
 
+    cemetery_plot_number = filters.CharFilter(field_name="cemetery_plot__plot_number", lookup_expr='icontains',
+                                              label='Номер участка')
+
     class Meta:
         model = Deceased
-        fields = ['first_name', 'last_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot']
+        fields = ['first_name', 'last_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot', 'cemetery_plot_number']
 
 
 class DeceasedFilterSerializer(serializers.Serializer):
@@ -32,6 +35,8 @@ class DeceasedFilterSerializer(serializers.Serializer):
     cemetery_plot = serializers.PrimaryKeyRelatedField(queryset=Cemetery.objects.all(), many=False, required=False,
                                                        label="Кладбище")
 
+    cemetery_plot_number = filters.CharFilter(required=False, label='Номер участка')
+
     class Meta:
         model = Deceased
-        fields = ['first_name', 'last_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot']
+        fields = ['first_name', 'last_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot', 'cemetery_plot_number']
