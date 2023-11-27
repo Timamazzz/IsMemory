@@ -165,10 +165,12 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 FRONTEND_BUILD_DIR = BASE_DIR.parent / 'belmemorial'
+FRONTEND_BUILD_DIR_2 = BASE_DIR.parent / 'belmemoriallending'
 
 if os.path.exists(FRONTEND_BUILD_DIR):
     STATICFILES_DIRS = [
         os.path.join(FRONTEND_BUILD_DIR, "build", "static"),
+        os.path.join(FRONTEND_BUILD_DIR_2, "build", "static"),
     ]
 
 # Default primary key field type
