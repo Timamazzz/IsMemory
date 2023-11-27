@@ -35,7 +35,7 @@ class DeceasedFilterSerializer(serializers.Serializer):
     cemetery_plot = serializers.PrimaryKeyRelatedField(queryset=Cemetery.objects.all(), many=False, required=False,
                                                        label="Кладбище")
 
-    cemetery_plot_number = serializers.CharFilter(required=False, label='Номер участка')
+    cemetery_plot_number = serializers.CharField(required=False, label='Номер участка')
 
     class Meta:
         model = Deceased
