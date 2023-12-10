@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 
 from IsMemory.admin_permissions import HasDashboardAdminGroupPermission
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
+from IsMemory.helpers.CustomOptionsMetadata import CustomOptionsMetadata
 from deceased_app.filters import DeceasedFilter, DeceasedFilterSerializer
 from deceased_app.models import Deceased
 from deceased_app.serializers.deceased_serializers import DeceasedSerializer, DeceasedCreateSerializer
@@ -27,6 +28,7 @@ class SearchDeceasedAPIView(APIView):
         'filter': DeceasedFilterSerializer
     }
     filterset_class = DeceasedFilter
+    metadata_class = CustomOptionsMetadata
 
     def get_queryset(self):
         queryset = Deceased.objects.all()
