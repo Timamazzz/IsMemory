@@ -70,5 +70,5 @@ class FavouritesDeceasedViewSet(CustomModelViewSet):
             deceased.favourites.add(user)
 
         queryset = user.favourites.all()
-        serializer = self.serializer_class(queryset, many=True)
+        serializer = DeceasedFavouriteListSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
