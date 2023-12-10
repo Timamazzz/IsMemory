@@ -66,11 +66,9 @@ class FavouritesDeceasedViewSet(CustomModelViewSet):
 
         if deceased.favourites.filter(id=user.pk).exists():
             deceased.favourites.remove(user)
-            message = 'Removed from favorites'
-            status_code = status.HTTP_200_OK
         else:
             deceased.favourites.add(user)
-            message = 'Added to favorites'
-            status_code = status.HTTP_201_CREATED
 
-        return Response({'message': message}, status=status_code)
+        queryset = user.favourites.all()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
