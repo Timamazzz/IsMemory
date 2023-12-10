@@ -1,5 +1,6 @@
 from django.db import models
 from locations_app.models import CemeteryPlot
+from users_app.models import CustomUser
 
 
 # Create your models here.
@@ -16,6 +17,8 @@ class Deceased(models.Model):
 
     notes = models.TextField("Примечание", null=True, blank=True)
 
+    favourites = models.ManyToManyField(CustomUser, related_name='favourites', null=True, blank=True)
+
     class Meta:
         verbose_name = 'Усопший'
         verbose_name_plural = 'Усопшие'
@@ -26,4 +29,3 @@ class Deceased(models.Model):
             return f"{self.first_name or ''} {self.last_name or ''} {self.patronymic or ''}".strip()
         else:
             return 'Усопший без имени, но с добрым сердцем'
-

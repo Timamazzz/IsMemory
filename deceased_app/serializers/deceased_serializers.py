@@ -26,3 +26,15 @@ class DeceasedCreateSerializer(DeceasedSerializer):
     class Meta:
         model = Deceased
         exclude = ['id', 'cemetery_plot']
+
+
+class DeceasedFavouriteListSerializer(DeceasedSerializer):
+    class Meta:
+        model = Deceased
+        exclude = ['cemetery_plot', 'favourites']
+
+
+class DeceasedFavouriteSerializer(DeceasedSerializer):
+    class Meta:
+        model = Deceased
+        fields = ['id']
