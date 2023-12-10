@@ -8,6 +8,6 @@ router.register(r'favourites', FavouritesDeceasedViewSet)
 router.register(r'', DeceasedViewSet)
 
 urlpatterns = [
-    path('search-deceased/', SearchDeceasedAPIView.as_view(), name='search_deceased'),
+    path('search-deceased/<int:pk>', SearchDeceasedAPIView.as_view(), name='search_deceased'),
     path('', include(router.urls)),
 ]

@@ -34,13 +34,16 @@ class SearchDeceasedAPIView(APIView):
     metadata_class = CustomOptionsMetadata
 
     def get_queryset(self):
-        queryset = Deceased.objects.all()
-        filterset = self.filterset_class(self.request.query_params, queryset=queryset)
+        filterset = self.filterset_class(self.request.query_params, queryset=self.queryset)
         return filterset.qs
 
-    def get(self, request):
+    def get(self, request, pk=None):
         queryset = self.get_queryset()
-        serializer = self.serializer_class(queryset, many=True)
+        if pk:
+            deceased = get_object_or_404(queryset, pk=pk)
+            serializer = self.serializer_class(deceased)
+        else:
+            serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
