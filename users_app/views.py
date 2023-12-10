@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from IsMemory.admin_permissions import HasDashboardAdminGroupPermission
+from users_app.admin_permissions import HasDashboardAdminGroupPermission
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from users_app.models import CustomUser
 from users_app.serializers.admin_user_serializers import AdminUserSerializer, AdminUserRetrieveSerializer, \
