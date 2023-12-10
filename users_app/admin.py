@@ -11,12 +11,12 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'first_name', 'last_name', 'patronymic', 'organization')
-    search_fields = ('email', 'first_name', 'last_name', 'patronymic', 'organization__name')
+    list_display = ('email', 'phone_number', 'first_name', 'last_name', 'patronymic', 'organization')
+    search_fields = ('email', 'phone_number', 'first_name', 'last_name', 'patronymic', 'organization__name')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'date_joined', 'organization')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'patronymic', 'organization')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'patronymic', 'phone_number', 'organization')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )

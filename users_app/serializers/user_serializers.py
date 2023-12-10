@@ -9,10 +9,17 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserCreateSerializer(UserSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    patronymic = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    phone_number = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ['email', 'password', 'first_name', 'last_name', 'patronymic']
+        fields = ['first_name', 'last_name', 'patronymic', 'email', 'phone_number', 'password']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)

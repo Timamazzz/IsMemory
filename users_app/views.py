@@ -38,10 +38,7 @@ def reset_password(request):
                 priority='now'
             )
 
-            serialized_user = UserRetrieveSerializer(user)
-
-            return Response({'user': serialized_user.data, 'message': 'Password reset successfully'},
-                            status=status.HTTP_200_OK)
+            return Response({'message': 'Password reset successfully'}, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({'error': 'User with such email not found'}, status=status.HTTP_404_NOT_FOUND)
 
