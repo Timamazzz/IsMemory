@@ -10,12 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
-    patronymic = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
-    phone_number = serializers.CharField(required=True)
-    password = serializers.CharField(required=True, write_only=True)
+    first_name = serializers.CharField(required=True, label='Имя')
+    last_name = serializers.CharField(required=True, label='Фамилия')
+    patronymic = serializers.CharField(required=True, label='Отчество')
+    email = serializers.EmailField(required=True, label='Электронная почта')
+    phone_number = serializers.CharField(required=True, label='Номер телефона')
+    password = serializers.CharField(required=True, write_only=True, label='Пароль')
 
     class Meta:
         model = CustomUser
@@ -32,7 +32,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserRetrieveSerializer(UserSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'patronymic', 'email']
+        fields = ['id', 'first_name', 'last_name', 'patronymic', 'email', 'phone_number']
 
 
 class UserResetPasswordSerializer(UserSerializer):

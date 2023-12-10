@@ -2,6 +2,7 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from IsMemory.admin_permissions import HasDashboardAdminGroupPermission
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from locations_app.enums import CemeteryPlotStatusEnum
 from locations_app.filters import CemeteryFilter, CemeteryMapFilterSerializer, CemeteryFilterSerializer, \
@@ -32,7 +33,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'filter': CemeteryFilterSerializer,
     }
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
 
     def get_queryset(self):
         queryset = Cemetery.objects.annotate(
@@ -73,7 +74,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'filter': CemeteryPlotFilterSerializers
     }
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset()).order_by('-id')

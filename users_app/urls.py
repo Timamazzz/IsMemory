@@ -3,9 +3,10 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users_app import views
-from users_app.views import UserViewSet
+from users_app.views import UserViewSet, AdminViewSet
 
 router = DefaultRouter()
+router.register(r'admins', AdminViewSet)
 router.register(r'', UserViewSet)
 
 urlpatterns = [
