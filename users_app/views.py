@@ -78,6 +78,10 @@ class AdminViewSet(CustomModelViewSet):
     }
     permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(groups__name='dashboard-admin')
+
 
 class UserViewSet(CustomModelViewSet):
     queryset = CustomUser.objects.all()
@@ -87,3 +91,7 @@ class UserViewSet(CustomModelViewSet):
         'create': UserCreateSerializer,
         'reset-password': UserResetPasswordSerializer,
     }
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.exclude(groups__name='dashboard-admin')
