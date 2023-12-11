@@ -22,6 +22,20 @@ class DeceasedFromCemeteryPlotSerializer(DeceasedSerializer):
         self.fields['id'].choices = [(obj.id, str(obj)) for obj in Deceased.objects.all()]
 
 
+class DeceasedListSerializer(DeceasedSerializer):
+    is_favourite = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Deceased
+        exclude = ['favourites']
+
+    def get_is_favourite(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.favourites.filter(id=request.user.id).exists()
+        return False
+
+
 class DeceasedCreateSerializer(DeceasedSerializer):
     class Meta:
         model = Deceased

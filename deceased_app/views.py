@@ -9,7 +9,7 @@ from IsMemory.helpers.CustomOptionsMetadata import CustomOptionsMetadata
 from deceased_app.filters import DeceasedFilter, DeceasedFilterSerializer
 from deceased_app.models import Deceased
 from deceased_app.serializers.deceased_serializers import DeceasedSerializer, DeceasedCreateSerializer, \
-    DeceasedFavouriteListSerializer, DeceasedFavouriteSerializer
+    DeceasedFavouriteListSerializer, DeceasedFavouriteSerializer, DeceasedListSerializer
 from rest_framework.response import Response
 
 
@@ -44,7 +44,7 @@ class SearchDeceasedAPIView(APIView):
             deceased = get_object_or_404(queryset, pk=pk)
             serializer = DeceasedSerializer(deceased)
         else:
-            serializer = DeceasedSerializer(queryset, many=True)
+            serializer = DeceasedListSerializer(queryset, many=True, context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
