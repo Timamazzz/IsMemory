@@ -10,4 +10,5 @@ class DeceasedAdmin(admin.ModelAdmin):
     list_filter = ('cemetery_plot', 'death_date', 'burial_date')
     date_hierarchy = 'death_date'
 
+
 admin.site.register(Deceased, DeceasedAdmin)

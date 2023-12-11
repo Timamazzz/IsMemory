@@ -6,7 +6,7 @@ from users_app.models import CustomUser
 # Create your models here.
 class Deceased(models.Model):
     cemetery_plot = models.ForeignKey(CemeteryPlot, null=True, blank=True, on_delete=models.CASCADE,
-                                      related_name='cemetery_plot_set')
+                                      related_name='cemetery_plot_set', verbose_name='Кладбище')
     birth_date = models.DateField("Дата рождения", null=True, blank=True)
     death_date = models.DateField("Дата смерти", null=True, blank=True)
     burial_date = models.DateField("Дата захоронения", null=True, blank=True)
@@ -17,7 +17,8 @@ class Deceased(models.Model):
 
     notes = models.TextField("Примечание", null=True, blank=True)
 
-    favourites = models.ManyToManyField(CustomUser, related_name='favourites', null=True, blank=True)
+    favourites = models.ManyToManyField(CustomUser, related_name='favourites', null=True, blank=True,
+                                        verbose_name='В избранном у пользователей')
 
     class Meta:
         verbose_name = 'Усопший'
