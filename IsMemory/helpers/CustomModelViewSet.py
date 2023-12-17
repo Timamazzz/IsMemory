@@ -13,4 +13,8 @@ class CustomModelViewSet(viewsets.ModelViewSet):
         return serializer_class(*args, **kwargs)
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return self.serializer_list.get('create', self.serializer_class)
+        elif self.action in ['update', 'partial_update']:
+            return self.serializer_list.get('update', self.serializer_class)
         return self.serializer_list.get(self.action, self.serializer_class)
