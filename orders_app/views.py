@@ -17,7 +17,10 @@ class OrderViewSet(CustomModelViewSet):
     }
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        if self.request.user:
+            return Order.objects.filter(user=self.request.user)
+        else:
+            return Order.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
