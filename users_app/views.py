@@ -90,6 +90,7 @@ class UserViewSet(CustomModelViewSet):
         'retrieve': UserRetrieveSerializer,
         'create': UserCreateSerializer,
         'reset-password': UserResetPasswordSerializer,
+        'update': UserPartialUpdateSerializer,
         'partial_update': UserPartialUpdateSerializer
     }
 
