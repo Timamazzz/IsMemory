@@ -52,7 +52,7 @@ class UserPartialUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'patronymic', 'email', 'phone_number', 'password', 'password_confirmation']
+        fields = ['id', 'first_name', 'last_name', 'patronymic', 'email', 'phone_number', 'password', 'password_confirmation']
 
     def validate(self, data):
         if data.get('password') != data.get('password_confirmation'):
