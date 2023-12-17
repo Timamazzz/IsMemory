@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,10 +18,10 @@ class OrderViewSet(CustomModelViewSet):
     }
 
     def get_queryset(self):
-        if self.request.user:
-            return Order.objects.filter(user=self.request.user)
-        else:
+        if isinstance(self.request.user, AnonymousUser):
             return Order.objects.all()
+        else:
+            return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
