@@ -33,7 +33,7 @@ class OrderViewSet(CustomModelViewSet):
         if not phone_number:
             return Response({"error": "Phone number is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        orders = Order.objects.filter(executor__phone_number__exact=phone_number)
+        orders = Order.objects.filter(executor__phone_number=phone_number)
 
         if not orders.exists():
             return Response({"message": "No orders found for the specified phone number"},
