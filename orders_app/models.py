@@ -2,7 +2,7 @@ from django.db import models
 from deceased_app.models import Deceased
 from orders_app.enums import OrderStatusEnum
 from services_app.models import Service
-from users_app.models import PhoneNumberValidator
+from users_app.models import PhoneNumberValidator, CustomUser
 
 
 class Executor(models.Model):
@@ -48,6 +48,8 @@ class Order(models.Model):
         null=True,
         blank=True
     )
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь',)
 
     def __str__(self):
         return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'

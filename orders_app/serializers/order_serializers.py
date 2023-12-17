@@ -22,4 +22,4 @@ class OrderListSerializer(OrderSerializer):
 class OrderCreateSerializer(OrderSerializer):
     class Meta:
         model = Order
-        fields = ['service', 'deceased']
+        fields = ['service', 'deceased', 'user']

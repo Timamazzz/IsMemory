@@ -19,6 +19,9 @@ class OrderViewSet(CustomModelViewSet):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     @action(detail=False, methods=['GET'])
     def get_orders_by_phone(self, request, *args, **kwargs):
         phone_number = request.query_params.get('phone_number')
