@@ -28,8 +28,8 @@ class Executor(models.Model):
 
 
 class Order(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Название заказа')
-    date = models.DateField(verbose_name='Дата заказа', auto_now_add=True)
+    name = models.CharField(max_length=255, verbose_name='Название заказа', null=True, blank=True,)
+    date = models.DateField(verbose_name='Дата заказа', auto_now_add=True, null=True, blank=True,)
 
     executor = models.ForeignKey(Executor, on_delete=models.SET_NULL, null=True, blank=True,
                                  verbose_name='Исполнитель')
