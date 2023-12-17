@@ -52,3 +52,12 @@ class DeceasedFavouriteSerializer(DeceasedSerializer):
     class Meta:
         model = Deceased
         fields = ['id']
+
+
+class DeceasedForOrderSerializer(serializers.ModelSerializer):
+    cemetery_name = serializers.CharField(source='cemetery_plot.cemetery.name')
+    cemetery_municipality_name = serializers.CharField(source='cemetery_plot.cemetery.municipality.name')
+
+    class Meta:
+        model = Deceased
+        fields = ['first_name', 'last_name', 'patronymic', 'cemetery_name', 'cemetery_municipality_name']

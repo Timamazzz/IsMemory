@@ -14,4 +14,4 @@ class OrderViewSet(CustomModelViewSet):
         'create': OrderCreateSerializer,
     }
 
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
