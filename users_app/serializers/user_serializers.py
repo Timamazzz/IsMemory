@@ -47,8 +47,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     patronymic = serializers.CharField(required=True, label='Отчество')
     email = serializers.EmailField(required=True, label='Электронная почта')
     phone_number = serializers.CharField(required=True, label='Номер телефона')
-    password = serializers.CharField(required=True, write_only=True, label='Новый пароль')
-    password_confirmation = serializers.CharField(required=True, write_only=True, label='Подтверждение пароля')
+    password = serializers.CharField(required=False, write_only=True, label='Новый пароль')
+    password_confirmation = serializers.CharField(required=False, write_only=True, label='Подтверждение пароля')
 
     class Meta:
         model = CustomUser

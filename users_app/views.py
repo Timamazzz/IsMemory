@@ -90,7 +90,7 @@ class UserViewSet(CustomModelViewSet):
         'retrieve': UserRetrieveSerializer,
         'create': UserCreateSerializer,
         'reset-password': UserResetPasswordSerializer,
-        'update': UserUpdateSerializer
+        'partial_update': UserUpdateSerializer
     }
 
     def get_queryset(self):
