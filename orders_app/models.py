@@ -6,9 +6,9 @@ from users_app.models import PhoneNumberValidator
 
 
 class Executor(models.Model):
-    first_name = models.CharField(max_length=255,  null=True, blank=True, verbose_name='Имя исполнителя')
-    last_name = models.CharField(max_length=255,  null=True, blank=True, verbose_name='Фамилия исполнителя')
-    patronymic = models.CharField(max_length=255,  null=True, blank=True, verbose_name='Отчество исполнителя')
+    first_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Имя исполнителя')
+    last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Фамилия исполнителя')
+    patronymic = models.CharField(max_length=255, null=True, blank=True, verbose_name='Отчество исполнителя')
     phone_number = models.CharField(
         validators=[PhoneNumberValidator()],
         max_length=17,
@@ -20,6 +20,11 @@ class Executor(models.Model):
 
     def __str__(self):
         return f'{self.last_name} {self.first_name} {self.patronymic} - {self.phone_number}'
+
+    class Meta:
+        verbose_name = 'Исполнитель'
+        verbose_name_plural = 'Исполнители'
+        app_label = 'orders_app'
 
 
 class Order(models.Model):
@@ -52,3 +57,8 @@ class Order(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+        app_label = 'orders_app'
