@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
+from orders_app.enums import OrderStatusEnum
 from orders_app.models import Order
 from orders_app.serializers.order_serializers import OrderSerializer, OrderCreateSerializer, OrderListSerializer
 
@@ -33,7 +34,7 @@ class OrderViewSet(CustomModelViewSet):
         if not phone_number:
             return Response({"error": "Phone number is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        orders = Order.objects.filter(executor__phone_number=phone_number)
+        orders = Order.objects.filter(executor__phone_number=phone_number, status=OrderStatusEnum.WORK_IN_PROGRESS.name)
 
         if not orders.exists():
             return Response({"message": "No orders found for the specified phone number"},

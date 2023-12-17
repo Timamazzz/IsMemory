@@ -1,4 +1,7 @@
+from aiogram.enums import ParseMode
 from django.db import models
+
+from bot import bot
 from deceased_app.models import Deceased
 from orders_app.enums import OrderStatusEnum
 from services_app.models import Service
@@ -50,6 +53,18 @@ class Order(models.Model):
     )
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь',)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.status == OrderStatusEnum.WORK_IN_PROGRESS.name and self.executor:
+
+            user = bot.get_chat('+7' + self.executor.phone_number)
+            chat_id = user.id
+
+            notification_text = f"Новый заказ!\n заказ № {self.id} {self.date.strftime('%d.%m.%Y')}\n {self.service.name}"
+
+            bot.send_message(chat_id=chat_id, text=notification_text, parse_mode=ParseMode.MARKDOWN)
 
     def __str__(self):
         return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'
