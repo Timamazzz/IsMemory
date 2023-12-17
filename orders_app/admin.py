@@ -10,5 +10,4 @@ class ExecutorAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date', 'executor', 'service', 'deceased', 'is_good', 'is_bad', 'status')
-    search_fields = ('name', 'comment')
+    list_display = ('date', 'executor', 'service', 'deceased', 'is_good', 'is_bad', 'status')
