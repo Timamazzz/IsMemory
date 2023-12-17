@@ -41,7 +41,7 @@ class UserResetPasswordSerializer(UserSerializer):
         fields = ['email']
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(UserSerializer):
     first_name = serializers.CharField(required=True, label='Имя')
     last_name = serializers.CharField(required=True, label='Фамилия')
     patronymic = serializers.CharField(required=True, label='Отчество')
@@ -59,7 +59,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Passwords do not match.")
         return data
 
-    def update(self, instance, validated_data):
+    def save(self, instance, validated_data):
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.patronymic = validated_data.get('patronymic', instance.patronymic)
