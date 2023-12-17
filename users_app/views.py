@@ -13,7 +13,7 @@ from users_app.models import CustomUser
 from users_app.serializers.admin_user_serializers import AdminUserSerializer, AdminUserRetrieveSerializer, \
     AdminUserResetPasswordSerializer
 from users_app.serializers.user_serializers import UserResetPasswordSerializer, UserRetrieveSerializer, \
-    UserCreateSerializer, UserUpdateSerializer
+    UserCreateSerializer, UserPartialUpdateSerializer
 
 
 @api_view(['POST'])
@@ -90,7 +90,7 @@ class UserViewSet(CustomModelViewSet):
         'retrieve': UserRetrieveSerializer,
         'create': UserCreateSerializer,
         'reset-password': UserResetPasswordSerializer,
-        'update': UserUpdateSerializer
+        'partial_update': UserPartialUpdateSerializer
     }
 
     def get_queryset(self):

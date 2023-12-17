@@ -41,7 +41,7 @@ class UserResetPasswordSerializer(UserSerializer):
         fields = ['email']
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
+class UserPartialUpdateSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True, label='Имя')
     last_name = serializers.CharField(required=True, label='Фамилия')
     patronymic = serializers.CharField(required=True, label='Отчество')
