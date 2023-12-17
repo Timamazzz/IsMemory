@@ -39,3 +39,36 @@ class UserResetPasswordSerializer(UserSerializer):
     class Meta:
         model = CustomUser
         fields = ['email']
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(required=True, label='Имя')
+    last_name = serializers.CharField(required=True, label='Фамилия')
+    patronymic = serializers.CharField(required=True, label='Отчество')
+    email = serializers.EmailField(required=True, label='Электронная почта')
+    phone_number = serializers.CharField(required=True, label='Номер телефона')
+    password = serializers.CharField(required=True, write_only=True, label='Новый пароль')
+    password_confirmation = serializers.CharField(required=True, write_only=True, label='Подтверждение пароля')
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'patronymic', 'email', 'phone_number', 'password', 'password_confirmation']
+
+    def validate(self, data):
+        if data.get('password') != data.get('password_confirmation'):
+            raise serializers.ValidationError("Passwords do not match.")
+        return data
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.patronymic = validated_data.get('patronymic', instance.patronymic)
+        instance.email = validated_data.get('email', instance.email)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+
+        password = validated_data.get('password')
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
