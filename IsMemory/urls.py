@@ -23,5 +23,5 @@ urlpatterns = [
     path('api/deceased/', include('deceased_app.urls')),
     path('api/locations/', include('locations_app.urls')),
     path('api/services/', include('services_app.urls')),
-    path('api/orders/', include('services_app.urls')),
+    path('api/orders/', include('orders_app.urls')),
 ]
