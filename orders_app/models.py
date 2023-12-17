@@ -28,7 +28,6 @@ class Executor(models.Model):
 
 
 class Order(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Название заказа', null=True, blank=True,)
     date = models.DateField(verbose_name='Дата заказа', auto_now_add=True, null=True, blank=True,)
 
     executor = models.ForeignKey(Executor, on_delete=models.SET_NULL, null=True, blank=True,
@@ -50,13 +49,8 @@ class Order(models.Model):
         blank=True
     )
 
-    def save(self, *args, **kwargs):
-        if not self.name:
-            self.name = f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'
-        super(Order, self).save(*args, **kwargs)
-
     def __str__(self):
-        return self.name
+        return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'
 
     class Meta:
         verbose_name = 'Заказ'
