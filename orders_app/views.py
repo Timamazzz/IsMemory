@@ -20,6 +20,7 @@ class OrderViewSet(CustomModelViewSet):
         'list': OrderListSerializer,
         'create': OrderCreateSerializer,
         'update': OrderUpdateSerializer,
+        'retrieve': OrderListSerializer
     }
 
     def get_queryset(self):
@@ -41,7 +42,7 @@ class OrderViewSet(CustomModelViewSet):
         orders = Order.objects.filter(executor__chat_id=chat_id, status=OrderStatusEnum.WORK_IN_PROGRESS.name)
 
         if not orders.exists():
-            return Response({"message": "No orders found for the specified phone number"},
+            return Response({"message": "No orders found for the specified Chat id"},
                             status=status.HTTP_404_NOT_FOUND)
 
         serializer = OrderListSerializer(orders, many=True)
