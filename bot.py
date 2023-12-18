@@ -144,7 +144,8 @@ async def view_all_orders(message: types.Message):
         for order in orders:
             order_date = datetime.strptime(order['date'], '%Y-%m-%d')
             formatted_date = order_date.strftime('%d.%m.%Y')
-            keyboard.row(KeyboardButton(text=f"заказ № {order['id']} {formatted_date}\n {order['service_name']}"))
+            keyboard.add(KeyboardButton(text=f"заказ № {order['id']} {formatted_date}\n {order['service_name']}"))
+        keyboard.adjust(4)
 
         keyboard.row(
             KeyboardButton(text="Вернуться в главное меню")
