@@ -1,9 +1,10 @@
 import asyncio
 
+import requests
 from aiogram.enums import ParseMode
 from django.db import models
 
-from bot import bot
+from bot import bot, BOT_TOKEN
 from deceased_app.models import Deceased
 from orders_app.enums import OrderStatusEnum
 from services_app.models import Service
@@ -22,9 +23,16 @@ class Executor(models.Model):
         null=True,
         verbose_name="Номер телефона"
     )
+    chat_id = models.CharField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name="Telegram ID"
+    )
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.patronymic} - {self.phone_number}'
+        return f'{self.last_name} {self.first_name} {self.patronymic} - {self.phone_number}' if self.last_name or self.first_name or self.patronymic else f"{self.phone_number}"
 
     class Meta:
         verbose_name = 'Исполнитель'
@@ -33,7 +41,7 @@ class Executor(models.Model):
 
 
 class Order(models.Model):
-    date = models.DateField(verbose_name='Дата заказа', auto_now_add=True, null=True, blank=True,)
+    date = models.DateField(verbose_name='Дата заказа', auto_now_add=True, null=True, blank=True, )
 
     executor = models.ForeignKey(Executor, on_delete=models.SET_NULL, null=True, blank=True,
                                  verbose_name='Исполнитель')
@@ -54,31 +62,18 @@ class Order(models.Model):
         blank=True
     )
 
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь',)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь', )
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
         if self.status == OrderStatusEnum.WORK_IN_PROGRESS.name and self.executor:
-            print('hello')
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(self.send_notification())
-            print('hello')
-
-    async def send_notification(self):
-        try:
-            while True:
-                user = await bot.get_chat('+7' + self.executor.phone_number)
-                if user:
-                    break
-                await asyncio.sleep(1)
-
-            chat_id = user.id
-            notification_text = f"Новый заказ!\n заказ № {self.id} {self.date.strftime('%d.%m.%Y')}\n {self.service.name}"
-            await bot.send_message(chat_id=chat_id, text=notification_text, parse_mode=ParseMode.MARKDOWN)
-        except Exception as e:
-            print(f"Error sending notification: {str(e)}")
+            if self.executor.chat_id:
+                chat_id = self.executor.chat_id
+                notification_text = f"Новый заказ!\n заказ № {self.id} {self.date.strftime('%d.%m.%Y')}\n {self.service.name}"
+                url_req = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + notification_text
+                results = requests.get(url_req)
+                print(results.json())
 
     def __str__(self):
         return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'

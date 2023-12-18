@@ -5,7 +5,9 @@ from rest_framework.response import Response
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from orders_app.enums import OrderStatusEnum
-from orders_app.models import Order
+from orders_app.models import Order, Executor
+from orders_app.serializers.executor_serializers import (ExecutorSerializer, ExecutorCreateSerializer,
+                                                         ExecutorSetDataSerializer)
 from orders_app.serializers.order_serializers import OrderSerializer, OrderCreateSerializer, OrderListSerializer, \
     OrderUpdateSerializer
 
@@ -44,3 +46,28 @@ class OrderViewSet(CustomModelViewSet):
 
         serializer = OrderListSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ExecutorViewSet(CustomModelViewSet):
+    queryset = Executor.objects.all()
+    serializer_class = ExecutorSerializer
+    serializer_list = {
+        'create': ExecutorCreateSerializer,
+        'set_data': ExecutorSetDataSerializer,
+    }
+
+    @action(detail=False, methods=['PUT'])
+    def set_data(self, request, *args, **kwargs):
+        phone_number = request.data.get('phone_number')
+        chat_id = request.data.get('chat_id')
+        try:
+            executor = Executor.objects.get(phone_number=phone_number)
+            executor.chat_id = chat_id
+            executor.save()
+            serializer = ExecutorSerializer(executor)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Executor.DoesNotExist:
+            executor = Executor.objects.create(chat_id=chat_id, phone_number=phone_number)
+            serializer = ExecutorSerializer(executor)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
