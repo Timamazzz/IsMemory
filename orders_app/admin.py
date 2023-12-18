@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from docs_app.models import OrderImage
 from .models import Executor, Order
 
 
@@ -8,6 +10,12 @@ class ExecutorAdmin(admin.ModelAdmin):
     search_fields = ('first_name', 'last_name', 'patronymic', 'phone_number')
 
 
+class OrderImageInline(admin.TabularInline):
+    model = OrderImage
+    extra = 1
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('date', 'executor', 'service', 'deceased', 'is_good', 'is_bad', 'status')
+    inlines = [OrderImageInline]
