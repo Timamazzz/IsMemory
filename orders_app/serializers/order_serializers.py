@@ -19,7 +19,7 @@ class OrderImageSerializer(serializers.ModelSerializer):
         model = OrderImage
         fields = '__all__'
 class OrderDetailSerializer(OrderSerializer):
-    images = OrderImageSerializer(source="images", many=True, required=False)
+    images = OrderImageSerializer(source="images_order_rel", many=True, required=False)
     class Meta:
         model = Order
         fields = '__all__'
@@ -46,7 +46,7 @@ class OrderImageSerializerWriter(WritableNestedModelSerializer):
         model = OrderImage
 
 class OrderUpdateSerializer(WritableNestedModelSerializer):
-    images = OrderImageSerializerWriter(source="images",many=True, required=False)
+    images = OrderImageSerializerWriter(source="images_order_rel",many=True, required=False)
 
     class Meta:
         model = Order

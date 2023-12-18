@@ -37,7 +37,7 @@ class CemeteryPlotDoc(models.Model):
 
 
 class OrderImage(models.Model):
-    Order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, related_name='images')
+    Order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, related_name='images_order_rel')
     file = models.FileField("Изображение", null=True, blank=True)
     uploaded_at = models.DateTimeField("Дата загрузки",  null=True,
                                        blank=True, auto_now=True)
