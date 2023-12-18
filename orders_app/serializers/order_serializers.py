@@ -31,10 +31,11 @@ class OrderDetailSerializer(OrderSerializer):
 class OrderListSerializer(OrderSerializer):
     service_name = serializers.CharField(source='service.name')
     deceased = DeceasedForOrderSerializer()
+    images = OrderImageSerializer(source="images_order_rel", many=True, required=False)
 
     class Meta:
         model = Order
-        fields = ['id', 'date', 'status', 'service_name', 'deceased', 'comment', 'is_good', 'is_bad']
+        fields = ['id', 'date', 'status', 'service_name', 'deceased', 'comment', 'is_good', 'is_bad', 'images']
 
 
 class OrderCreateSerializer(OrderSerializer):
