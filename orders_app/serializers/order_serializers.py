@@ -27,8 +27,12 @@ class OrderCreateSerializer(OrderSerializer):
         fields = ['service', 'deceased', 'user']
 
 
-class OrderImageSerializer(serializers.Serializer):
+class OrderImageSerializer(serializers.ModelSerializer):
     file = serializers.ImageField(allow_empty_file=False)
+
+    class Meta:
+        model = OrderImage
+        fields = '__all__'
 
 
 class OrderUpdateSerializer(WritableNestedModelSerializer):
@@ -37,12 +41,3 @@ class OrderUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Order
         fields = ['comment', 'is_good', 'is_bad', 'status', 'images']
-
-    def update(self, instance, validated_data):
-        images_data = validated_data.pop('images', [])
-        instance = super().update(instance, validated_data)
-
-        for image_data in images_data:
-            OrderImage.objects.create(order=instance, **image_data)
-
-        return instance
