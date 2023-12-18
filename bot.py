@@ -14,9 +14,9 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from orders_app.enums import OrderStatusEnum
 
 BOT_TOKEN = '6845960244:AAEqZSwtsNb3zaj2uDtZ6HplPPzYPaFB28U'
-# API_URL = "https://belmemorial.ru/api"
+API_URL = "https://belmemorial.ru/api"
 
-API_URL = 'http://51.250.126.124:3031/api'
+# API_URL = 'http://51.250.126.124:3031/api'
 
 logging.basicConfig(level=logging.INFO)
 
