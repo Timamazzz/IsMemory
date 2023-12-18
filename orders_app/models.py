@@ -65,6 +65,7 @@ class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь', )
 
     def save(self, *args, **kwargs):
+        print(self)
         super().save(*args, **kwargs)
 
         if self.status == OrderStatusEnum.WORK_IN_PROGRESS.name and self.executor:
@@ -73,7 +74,6 @@ class Order(models.Model):
                 notification_text = f"Новый заказ!\n заказ № {self.id} {self.date.strftime('%d.%m.%Y')}\n {self.service.name}"
                 url_req = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + notification_text
                 results = requests.get(url_req)
-                print(results.json())
 
     def __str__(self):
         return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'

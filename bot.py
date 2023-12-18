@@ -87,11 +87,13 @@ class OrderFinishStates(StatesGroup):
 
 @dp.message(F.photo)
 async def handle_completed_order(message: types.Message, state: FSMContext):
-    order_id = await state.get_data()
+    order_data = await state.get_data()
+    order_id = order_data.get('order_id')
     print(order_id)
     await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
     # response = requests.patch(f'{API_URL}/orders/{order_id}/',
     #                           params={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})
+    print(f'{API_URL}/orders/{order_id}/')
     response = requests.patch(f'{API_URL}/orders/{order_id}/', params={'status': OrderStatusEnum.COMPLETED.name})
     print(response)
     if response.status_code == 200:
@@ -109,7 +111,7 @@ async def finish_order(message: types.Message, state: FSMContext):
 
 @dp.message(Command("reset_state"))
 async def reset_state(message: types.Message, state: FSMContext):
-    await state.finish()
+    await state.clear()
     await message.answer("Состояние сброшено.")
 
 
