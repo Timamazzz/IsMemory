@@ -100,7 +100,7 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
 
     file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
     response = requests.get(file_url)
-    file_name = f"{message.photo[0].file_id}{file_extension}"
+    file_name = f"./media/{message.photo[0].file_id}{file_extension}"
 
     if response.status_code == 200:
         with open(file_name, 'wb') as file:
