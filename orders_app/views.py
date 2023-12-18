@@ -58,7 +58,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         serializer = OrderUpdateSerializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        print("Serializer",serializer.data)
+        print("Serializer",serializer.validated_data)
 
         self.perform_update(serializer)
 
