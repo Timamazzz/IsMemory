@@ -15,7 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
+
+from IsMemory import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +27,6 @@ urlpatterns = [
     path('api/locations/', include('locations_app.urls')),
     path('api/services/', include('services_app.urls')),
     path('api/orders/', include('orders_app.urls')),
+    re_path(r'^media/(?P<path>.*)$', serve,
+         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 ]
