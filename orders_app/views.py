@@ -53,12 +53,8 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        print("Request",request.data)
-
         serializer = OrderUpdateSerializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-
-        print("Serializer",serializer.validated_data)
 
         self.perform_update(serializer)
 

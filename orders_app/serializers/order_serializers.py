@@ -22,6 +22,8 @@ class OrderImageSerializer(serializers.ModelSerializer):
 
 class OrderDetailSerializer(OrderSerializer):
     images = OrderImageSerializer(source="images_order_rel", many=True, required=False)
+    service_name = serializers.CharField(source="service.name", required=False)
+    deceased = DeceasedForOrderSerializer()
 
     class Meta:
         model = Order
