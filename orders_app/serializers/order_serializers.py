@@ -23,3 +23,9 @@ class OrderCreateSerializer(OrderSerializer):
     class Meta:
         model = Order
         fields = ['service', 'deceased', 'user']
+
+
+class OrderUpdateSerializer(OrderSerializer):
+    class Meta:
+        model = Order
+        fields = ['comment', 'is_good', 'is_bad']

@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram.enums import ParseMode
 from django.db import models
 
@@ -58,13 +60,25 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
         if self.status == OrderStatusEnum.WORK_IN_PROGRESS.name and self.executor:
+            print('hello')
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(self.send_notification())
+            print('hello')
 
-            user = bot.get_chat('+7' + self.executor.phone_number)
+    async def send_notification(self):
+        try:
+            while True:
+                user = await bot.get_chat('+7' + self.executor.phone_number)
+                if user:
+                    break
+                await asyncio.sleep(1)
+
             chat_id = user.id
-
             notification_text = f"Новый заказ!\n заказ № {self.id} {self.date.strftime('%d.%m.%Y')}\n {self.service.name}"
-
-            bot.send_message(chat_id=chat_id, text=notification_text, parse_mode=ParseMode.MARKDOWN)
+            await bot.send_message(chat_id=chat_id, text=notification_text, parse_mode=ParseMode.MARKDOWN)
+        except Exception as e:
+            print(f"Error sending notification: {str(e)}")
 
     def __str__(self):
         return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'

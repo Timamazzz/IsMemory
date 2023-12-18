@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from orders_app.enums import OrderStatusEnum
 from orders_app.models import Order
-from orders_app.serializers.order_serializers import OrderSerializer, OrderCreateSerializer, OrderListSerializer
+from orders_app.serializers.order_serializers import OrderSerializer, OrderCreateSerializer, OrderListSerializer, \
+    OrderUpdateSerializer
 
 
 # Create your views here.
@@ -16,6 +17,7 @@ class OrderViewSet(CustomModelViewSet):
     serializer_list = {
         'list': OrderListSerializer,
         'create': OrderCreateSerializer,
+        'update': OrderUpdateSerializer,
     }
 
     def get_queryset(self):
