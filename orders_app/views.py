@@ -49,6 +49,26 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         serializer = OrderListSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        print("Request",request.data)
+
+        serializer = OrderUpdateSerializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        print("Serializer",serializer.data)
+
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
 
 class ExecutorViewSet(CustomModelViewSet):
     queryset = Executor.objects.all()
