@@ -64,6 +64,9 @@ class Order(models.Model):
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь', )
 
+    def __str__(self):
+        return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}' or f"Заказа №{self.id}"
+
     def save(self, *args, **kwargs):
         print(self)
         super().save(*args, **kwargs)
@@ -75,8 +78,7 @@ class Order(models.Model):
                 url_req = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + notification_text
                 results = requests.get(url_req)
 
-    def __str__(self):
-        return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}' or f"Заказа №{self.id}"
+
 
     class Meta:
         verbose_name = 'Заказ'
