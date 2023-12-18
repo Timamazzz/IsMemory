@@ -5,6 +5,8 @@ import asyncio
 import logging
 from aiogram.filters.command import Command
 from aiogram import Bot, Dispatcher, types, F
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
@@ -79,6 +81,38 @@ async def get_user_orders(chat_id):
     return orders
 
 
+class OrderFinishStates(StatesGroup):
+    WAITING_FOR_PHOTO = State()
+
+
+@dp.message(F.photo)
+async def handle_completed_order(message: types.Message, state: FSMContext):
+    order_id = await state.get_data()
+    print(order_id)
+    await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
+    # response = requests.patch(f'{API_URL}/orders/{order_id}/',
+    #                           params={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})
+    response = requests.patch(f'{API_URL}/orders/{order_id}/', params={'status': OrderStatusEnum.COMPLETED.name})
+    print(response)
+    if response.status_code == 200:
+        await message.answer("Заказ успешно завершен!")
+    else:
+        await message.answer("Произошла ошибка при завершении заказа. Попробуйте позже.")
+
+
+@dp.message(lambda message: message.text.startswith("Завершить заказ №"))
+async def finish_order(message: types.Message, state: FSMContext):
+    order_id = message.text.split()[3]
+    await state.update_data(order_id=order_id)
+    await message.answer("Для завершения заказа, прикрепите изображение(я) с выполненной работой.")
+
+
+@dp.message(Command("reset_state"))
+async def reset_state(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer("Состояние сброшено.")
+
+
 @dp.message(lambda message: message.text == "Заказы")
 async def view_all_orders(message: types.Message):
     chat_id = message.chat.id
@@ -98,32 +132,47 @@ async def view_all_orders(message: types.Message):
         await message.answer("У вас нет активных заказов.")
 
 
+@dp.message(lambda message: message.text.startswith("заказ №"))
+async def order_actions(message: types.Message):
+    order_id = message.text.split()[2]
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text=f"Информация по заказу № {order_id}"),
+        types.KeyboardButton(text=f"Завершить заказ № {order_id}"),
+    )
+    builder.row(
+        KeyboardButton(text="Заказы"),
+        KeyboardButton(text="Вернуться в главное меню"),
+    )
+    await message.answer(f"#{order_id}", reply_markup=builder.as_markup(resize_keyboard=True))
+
+
 async def get_order_details(order_id):
-    print(order_id)
     response = requests.get(f'{API_URL}/orders/{order_id}')
-    print(response)
     order_details = response.json() if response.status_code == 200 else None
-    print(order_details)
     return order_details
 
 
-@dp.message(lambda message: message.text.startswith("заказ №"))
+@dp.message(lambda message: message.text.startswith("Информация по заказу №"))
 async def view_order_details(message: types.Message):
-    order_id = message.text.split()[2]
+    order_id = message.text.split()[4]
     order_details = await get_order_details(order_id)
 
     if order_details:
-        details_text = f"Детали заказа #{order_id}:\n"
+        details_text = f"Детали заказа № {order_id}:\n"
         details_text += f"Название услуги: {order_details['service_name']}\n"
-        details_text += f"Дата: {order_details['date']}\n"
-        details_text += f"Описание: {order_details['description']}\n"
-        await message.answer(details_text)
 
-        main_keyboard = get_main_keyboard()
-        await message.answer(
-            "Выберите действие:",
-            reply_markup=main_keyboard.as_markup(resize_keyboard=True),
-        )
+        order_date = datetime.strptime(order_details['date'], '%Y-%m-%d')
+        formatted_date = order_date.strftime('%d.%m.%Y')
+        details_text += f"Дата: {formatted_date}\n"
+
+        deceased_info = order_details.get('deceased', {})
+        details_text += (f"Усопший:  {deceased_info.get('first_name', '')} "
+                         f"{deceased_info.get('last_name', '')} "
+                         f"{deceased_info.get('patronymic', '')}\n")
+
+        details_text += f"Кладбище: {deceased_info.get('cemetery_name', '')}, {deceased_info.get('cemetery_municipality_name', '')}\n"
+        await message.answer(details_text)
     else:
         await message.answer("Не удалось получить информацию о заказе. Попробуйте позже.")
 

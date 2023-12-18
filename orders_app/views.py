@@ -20,7 +20,7 @@ class OrderViewSet(CustomModelViewSet):
         'list': OrderListSerializer,
         'create': OrderCreateSerializer,
         'update': OrderUpdateSerializer,
-        'retrieve': OrderListSerializer
+        'retrieve': OrderListSerializer,
     }
 
     def get_queryset(self):
