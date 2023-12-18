@@ -65,7 +65,8 @@ class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь', )
 
     def __str__(self):
-        return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}' or f"Заказа №{self.id}"
+        date_str = self.date.strftime("%d-%m-%Y") if self.date else ''
+        return f'Заказ №{self.id} {date_str}' or f"Заказа №{self.id}"
 
     def save(self, *args, **kwargs):
         print(self)
