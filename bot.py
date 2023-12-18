@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import requests
@@ -88,7 +89,25 @@ class OrderFinishStates(StatesGroup):
 async def handle_completed_order(message: types.Message, state: FSMContext):
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
-    print(order_id)
+
+    #make for each file
+    file_info = await bot.get_file(message.photo[0].file_id)
+    file_path = file_info.file_path
+
+    file_extension = os.path.splitext(file_path)[1]
+
+    print(file_extension)
+
+    file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
+    response = requests.get(file_url)
+    file_name = f"{message.photo[0].file_id}{file_extension}"
+
+    if response.status_code == 200:
+        print("Ok")
+        with open(file_name,'wb') as file:
+            file.write(response.content)
+
+
     await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
     response = requests.patch(f'{API_URL}/orders/{order_id}/',
                               data={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})

@@ -12,6 +12,18 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class OrderImageSerializer(serializers.ModelSerializer):
+    file = serializers.ImageField(allow_empty_file=False)
+
+    class Meta:
+        model = OrderImage
+        fields = '__all__'
+class OrderDetailSerializer(OrderSerializer):
+    images = OrderImageSerializer(source="images", many=True, required=False)
+    class Meta:
+        model = Order
+        fields = '__all__'
+
 class OrderListSerializer(OrderSerializer):
     service_name = serializers.CharField(source='service.name')
     deceased = DeceasedForOrderSerializer()
@@ -27,16 +39,14 @@ class OrderCreateSerializer(OrderSerializer):
         fields = ['service', 'deceased', 'user']
 
 
-class OrderImageSerializer(serializers.ModelSerializer):
-    file = serializers.ImageField(allow_empty_file=False)
-
+class OrderImageSerializerWriter(WritableNestedModelSerializer):
+    file = serializers.CharField(allow_null=False, allow_blank=False)
+    original_name = serializers.CharField(allow_blank=False, allow_null=False)
     class Meta:
         model = OrderImage
-        fields = '__all__'
-
 
 class OrderUpdateSerializer(WritableNestedModelSerializer):
-    images = OrderImageSerializer(many=True, required=False)
+    images = OrderImageSerializerWriter(source="images",many=True, required=False)
 
     class Meta:
         model = Order

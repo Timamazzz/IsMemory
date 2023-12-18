@@ -4,23 +4,24 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
+from IsMemory.helpers.UploadMultipleFileImageMixin import UploadMultipleFileImageMixin
 from orders_app.enums import OrderStatusEnum
 from orders_app.models import Order, Executor
 from orders_app.serializers.executor_serializers import (ExecutorSerializer, ExecutorCreateSerializer,
                                                          ExecutorSetDataSerializer)
 from orders_app.serializers.order_serializers import OrderSerializer, OrderCreateSerializer, OrderListSerializer, \
-    OrderUpdateSerializer
+    OrderUpdateSerializer, OrderDetailSerializer
 
 
 # Create your views here.
-class OrderViewSet(CustomModelViewSet):
+class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     serializer_list = {
         'list': OrderListSerializer,
         'create': OrderCreateSerializer,
         'update': OrderUpdateSerializer,
-        'retrieve': OrderListSerializer,
+        'retrieve': OrderDetailSerializer,
     }
 
     def get_queryset(self):
