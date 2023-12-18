@@ -2,6 +2,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
 
 from deceased_app.serializers.deceased_serializers import DeceasedForOrderSerializer
+from docs_app.models import OrderImage
 from orders_app.models import Order
 
 
@@ -36,3 +37,12 @@ class OrderUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Order
         fields = ['comment', 'is_good', 'is_bad', 'status', 'images']
+
+    def update(self, instance, validated_data):
+        images_data = validated_data.pop('images', [])
+        instance = super().update(instance, validated_data)
+
+        for image_data in images_data:
+            OrderImage.objects.create(order=instance, **image_data)
+
+        return instance
