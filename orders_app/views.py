@@ -77,6 +77,7 @@ class ExecutorViewSet(CustomModelViewSet):
     @action(detail=False, methods=['PUT'])
     def set_data(self, request, *args, **kwargs):
         phone_number = request.data.get('phone_number')
+        print('phone', phone_number)
         chat_id = request.data.get('chat_id')
         try:
             executor = Executor.objects.get(phone_number=phone_number)
