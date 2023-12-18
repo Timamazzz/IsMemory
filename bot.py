@@ -13,8 +13,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from orders_app.enums import OrderStatusEnum
 
 BOT_TOKEN = '6845960244:AAEqZSwtsNb3zaj2uDtZ6HplPPzYPaFB28U'
-#API_URL = "https://belmemorial.ru/api"
-API_URL = "http://250.51.126.124:8960/api"
+API_URL = "https://belmemorial.ru/api"
 
 logging.basicConfig(level=logging.INFO)
 
@@ -95,8 +94,8 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
     # response = requests.patch(f'{API_URL}/orders/{order_id}/',
     #                           params={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})
     print(f'{API_URL}/orders/{order_id}/')
-    response = requests.patch(f'{API_URL}/orders/{order_id}/', params={'status': OrderStatusEnum.COMPLETED.name})
-    print(response)
+    response = requests.patch(f'{API_URL}/orders/{order_id}/', params={'status': "COMPLETED"})
+    print(response.json())
     if response.status_code == 200:
         await message.answer("Заказ успешно завершен!")
     else:
