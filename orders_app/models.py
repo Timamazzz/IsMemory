@@ -76,7 +76,7 @@ class Order(models.Model):
                 results = requests.get(url_req)
 
     def __str__(self):
-        return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}'
+        return f'Заказ №{self.id} {self.date.strftime("%d-%m-%Y")}' or f"Заказа №{self.id}"
 
     class Meta:
         verbose_name = 'Заказ'
