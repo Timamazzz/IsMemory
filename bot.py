@@ -31,7 +31,6 @@ def get_main_keyboard():
 
 @dp.message(lambda message: message.text == "Вернуться в главное меню")
 async def back_to_main_menu(message: types.Message):
-    print('hello')
     main_keyboard = get_main_keyboard()
     await message.answer(
         "Выберите действие:",
@@ -91,13 +90,16 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
     order_id = order_data.get('order_id')
     print(order_id)
     await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
-    # response = requests.patch(f'{API_URL}/orders/{order_id}/',
-    #                           params={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})
-    print(f'{API_URL}/orders/{order_id}/')
-    response = requests.patch(f'{API_URL}/orders/{order_id}/', params={'status': "COMPLETED"})
-    print(response.json())
+    response = requests.patch(f'{API_URL}/orders/{order_id}/',
+                              data={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})
+
     if response.status_code == 200:
         await message.answer("Заказ успешно завершен!")
+        main_keyboard = get_main_keyboard()
+        await message.answer(
+            "Выберите действие:",
+            reply_markup=main_keyboard,
+        )
     else:
         await message.answer("Произошла ошибка при завершении заказа. Попробуйте позже.")
 

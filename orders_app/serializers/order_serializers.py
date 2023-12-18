@@ -1,3 +1,4 @@
+from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
 
 from deceased_app.serializers.deceased_serializers import DeceasedForOrderSerializer
@@ -25,8 +26,13 @@ class OrderCreateSerializer(OrderSerializer):
         fields = ['service', 'deceased', 'user']
 
 
-class OrderUpdateSerializer(OrderSerializer):
+class OrderImageSerializer(serializers.Serializer):
+    file = serializers.ImageField(allow_empty_file=False)
+
+
+class OrderUpdateSerializer(WritableNestedModelSerializer):
+    images = OrderImageSerializer(many=True, required=False)
+
     class Meta:
         model = Order
-        fields = ['comment', 'is_good', 'is_bad', 'status']
-
+        fields = ['comment', 'is_good', 'is_bad', 'status', 'images']
