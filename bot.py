@@ -110,7 +110,8 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
 
     await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
     response = requests.patch(f'{API_URL}/orders/{order_id}/',
-                              data={'images': message.photo, 'status': OrderStatusEnum.COMPLETED.name})
+                              data={'images': {"file":file_name, "original_name": file_path},
+                                    'status': OrderStatusEnum.COMPLETED.name})
 
     if response.status_code == 200:
         await message.answer("Заказ успешно завершен!")
