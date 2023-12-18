@@ -32,13 +32,13 @@ class OrderViewSet(CustomModelViewSet):
         serializer.save(user=self.request.user)
 
     @action(detail=False, methods=['GET'])
-    def get_orders_by_phone(self, request, *args, **kwargs):
-        phone_number = request.query_params.get('phone_number')
+    def get_orders_by_chat_id(self, request, *args, **kwargs):
+        chat_id = request.query_params.get('chat_id')
 
-        if not phone_number:
-            return Response({"error": "Phone number is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not chat_id:
+            return Response({"error": "Chat id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        orders = Order.objects.filter(executor__phone_number=phone_number, status=OrderStatusEnum.WORK_IN_PROGRESS.name)
+        orders = Order.objects.filter(executor__chat_id=chat_id, status=OrderStatusEnum.WORK_IN_PROGRESS.name)
 
         if not orders.exists():
             return Response({"message": "No orders found for the specified phone number"},
@@ -67,7 +67,4 @@ class ExecutorViewSet(CustomModelViewSet):
             serializer = ExecutorSerializer(executor)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Executor.DoesNotExist:
-            executor = Executor.objects.create(chat_id=chat_id, phone_number=phone_number)
-            serializer = ExecutorSerializer(executor)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+            return Response(status=status.HTTP_404_NOT_FOUND)
