@@ -152,8 +152,6 @@ async def finish_order(message: types.Message, state: FSMContext):
         resize_keyboard=True,
     )
     order_data = await state.get_data()
-    order_id = order_data.get('order_id')
-    images = order_data.get('images', [])
     await message.answer(
         "Для завершения заказа, прикрепите изображение(я) с выполненной работой.",
         reply_markup=finish_keyboard,
@@ -171,13 +169,9 @@ async def process_finish_order(message: types.Message, state: FSMContext):
     )
 
     if images:
-        # response = requests.patch(f'{API_URL}/orders/{order_id}/',
-        #                           json={'images': images,
-        #                                 'status': OrderStatusEnum.COMPLETED.name})
-
         response = requests.patch(f'{API_URL}/orders/{order_id}/',
-                                  json={'images': images})
-
+                                  json={'images': images,
+                                        'status': OrderStatusEnum.COMPLETED.name})
         if response.status_code == 200:
             await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
             main_keyboard = get_main_keyboard()
@@ -194,9 +188,6 @@ async def process_finish_order(message: types.Message, state: FSMContext):
 
 @dp.message(F.photo)
 async def handle_completed_order(message: types.Message, state: FSMContext):
-    await message.answer(
-        f"0",
-    )
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
     if order_id:
@@ -214,17 +205,8 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
         if response.status_code == 200:
             with open(os.path.join('media', file_name), 'wb') as file:
                 file.write(response.content)
-
-            await message.answer(
-                f"before state update order_id: {order_id}, images:{images}",
-            )
-
             images.append({"file": file_name, "original_name": file_path})
             await state.update_data(images=images)
-
-            await message.answer(
-                f"after state update order_id: {order_id}, images:{images}",
-            )
         else:
             await message.answer("Ошибка отправки фото")
     else:
