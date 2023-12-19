@@ -143,6 +143,7 @@ async def view_order_details(message: types.Message):
 async def finish_order(message: types.Message, state: FSMContext):
     order_id = message.text.split()[3]
     await state.update_data(order_id=order_id)
+    await state.update_data(images=[])
     finish_keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Завершить")],
