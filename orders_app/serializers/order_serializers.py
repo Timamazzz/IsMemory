@@ -60,4 +60,5 @@ class OrderUpdateSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['comment', 'is_good', 'is_bad', 'status', 'images']
+        fields = ['id', 'comment', 'is_good', 'is_bad', 'status', 'images']
+        read_only_fields = ['id', 'images']
