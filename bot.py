@@ -146,6 +146,7 @@ async def finish_order(message: types.Message, state: FSMContext):
     finish_keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Завершить")],
+            [KeyboardButton(text="Заказы")],
         ],
         resize_keyboard=True,
     )
