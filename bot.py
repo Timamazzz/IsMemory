@@ -216,9 +216,6 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
             images.append({"file": file_name, "original_name": file_path})
             await state.update_data(images=images)
 
-            order_data = await state.get_data()
-            order_id = order_data.get('order_id')
-            images = order_data.get('images', [])
             await message.answer(
                 f"order_id: {order_id}, images:{images}",
             )
