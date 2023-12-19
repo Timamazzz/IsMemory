@@ -201,6 +201,10 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
     if order_id:
         images = order_data.get('images')
 
+        await message.answer(
+            f"1",
+        )
+
         file_info = await bot.get_file(message.photo[0].file_id)
         file_path = file_info.file_path
 
@@ -210,9 +214,17 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
         response = requests.get(file_url)
         file_name = f"{message.photo[0].file_id}{file_extension}"
 
+        await message.answer(
+            f"2",
+        )
+
         if response.status_code == 200:
             with open(os.path.join('media', file_name), 'wb') as file:
                 file.write(response.content)
+
+            await message.answer(
+                f"3",
+            )
 
             images.append({"file": file_name, "original_name": file_path})
             await state.update_data(images=images)
