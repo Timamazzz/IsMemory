@@ -170,9 +170,12 @@ async def process_finish_order(message: types.Message, state: FSMContext):
     )
 
     if images:
+        # response = requests.patch(f'{API_URL}/orders/{order_id}/',
+        #                           json={'images': images,
+        #                                 'status': OrderStatusEnum.COMPLETED.name})
+
         response = requests.patch(f'{API_URL}/orders/{order_id}/',
-                                  json={'images': images,
-                                        'status': OrderStatusEnum.COMPLETED.name})
+                                  json={'images': images})
 
         if response.status_code == 200:
             await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
