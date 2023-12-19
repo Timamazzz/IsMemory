@@ -189,7 +189,7 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
     if order_id:
         images = order_data.get('images', [])
 
-        file_info = await bot.get_file(message.photo[0].file_id)
+        file_info = await bot.get_file(message.photo[-1].file_id)
         file_path = file_info.file_path
 
         file_extension = os.path.splitext(file_path)[1]
