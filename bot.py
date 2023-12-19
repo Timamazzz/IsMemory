@@ -149,6 +149,12 @@ async def finish_order(message: types.Message, state: FSMContext):
         ],
         resize_keyboard=True,
     )
+    order_data = await state.get_data()
+    order_id = order_data.get('order_id')
+    images = order_data.get('images', [])
+    await message.answer(
+        f"order_id: {order_id}, images:{images}",
+    )
     await message.answer(
         "Для завершения заказа, прикрепите изображение(я) с выполненной работой.",
         reply_markup=finish_keyboard,
@@ -160,6 +166,13 @@ async def process_finish_order(message: types.Message, state: FSMContext):
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
     images = order_data.get('images', [])
+
+    order_data = await state.get_data()
+    order_id = order_data.get('order_id')
+    images = order_data.get('images', [])
+    await message.answer(
+        f"order_id: {order_id}, images:{images}",
+    )
 
     if images:
         response = requests.patch(f'{API_URL}/orders/{order_id}/',
@@ -186,8 +199,6 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
     order_id = order_data.get('order_id')
     if order_id:
         images = order_data.get('images')
-        if not images:
-            images = []
 
         file_info = await bot.get_file(message.photo[0].file_id)
         file_path = file_info.file_path
@@ -204,6 +215,13 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
 
             images.append({"file": file_name, "original_name": file_path})
             await state.update_data(images=images)
+
+            order_data = await state.get_data()
+            order_id = order_data.get('order_id')
+            images = order_data.get('images', [])
+            await message.answer(
+                f"order_id: {order_id}, images:{images}",
+            )
         else:
             await message.answer("Ошибка отправки фото")
     else:
