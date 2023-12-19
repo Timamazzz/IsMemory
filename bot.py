@@ -164,10 +164,6 @@ async def process_finish_order(message: types.Message, state: FSMContext):
     order_id = order_data.get('order_id')
     images = order_data.get('images', [])
 
-    await message.answer(
-        f"order_id: {order_id}, images:{images}",
-    )
-
     if images:
         response = requests.patch(f'{API_URL}/orders/{order_id}/',
                                   json={'images': images,
