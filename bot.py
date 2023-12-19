@@ -8,7 +8,7 @@ from aiogram.filters.command import Command
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from orders_app.enums import OrderStatusEnum
@@ -83,45 +83,6 @@ async def get_user_orders(chat_id):
     return orders
 
 
-class OrderFinishStates(StatesGroup):
-    WAITING_FOR_PHOTO = State()
-
-
-@dp.message(F.photo)
-async def handle_completed_order(message: types.Message, state: FSMContext):
-    order_data = await state.get_data()
-    order_id = order_data.get('order_id')
-
-    # make for each file
-    file_info = await bot.get_file(message.photo[0].file_id)
-    file_path = file_info.file_path
-
-    file_extension = os.path.splitext(file_path)[1]
-
-    file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
-    response = requests.get(file_url)
-    file_name = f"{message.photo[0].file_id}{file_extension}"
-
-    if response.status_code == 200:
-        with open(os.path.join('media',file_name), 'wb') as file:
-            file.write(response.content)
-
-    await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
-    response = requests.patch(f'{API_URL}/orders/{order_id}/',
-                              json={'images': [{"file": file_name, "original_name": file_path}],
-                                    'status': OrderStatusEnum.COMPLETED.name})
-
-    if response.status_code == 200:
-        await message.answer("Заказ успешно завершен!")
-        main_keyboard = get_main_keyboard()
-        await message.answer(
-            "Выберите действие:",
-            reply_markup=main_keyboard,
-        )
-    else:
-        await message.answer("Произошла ошибка при завершении заказа. Попробуйте позже.")
-
-
 @dp.message(lambda message: message.text.startswith("Завершить заказ №"))
 async def finish_order(message: types.Message, state: FSMContext):
     order_id = message.text.split()[3]
@@ -155,7 +116,7 @@ async def view_all_orders(message: types.Message):
         await message.answer("У вас нет активных заказов.")
 
 
-@dp.message(lambda message: message.text.startswith("заказ №"))
+@dp.message(lambda message: message.text.startswith("заказ №") if message.text else None)
 async def order_actions(message: types.Message):
     order_id = message.text.split()[2]
     builder = ReplyKeyboardBuilder()
@@ -176,7 +137,7 @@ async def get_order_details(order_id):
     return order_details
 
 
-@dp.message(lambda message: message.text.startswith("Информация по заказу №"))
+@dp.message(lambda message: message.text.startswith("Информация по заказу №") if message.text else None)
 async def view_order_details(message: types.Message):
     order_id = message.text.split()[4]
     order_details = await get_order_details(order_id)
@@ -198,6 +159,81 @@ async def view_order_details(message: types.Message):
         await message.answer(details_text)
     else:
         await message.answer("Не удалось получить информацию о заказе. Попробуйте позже.")
+
+
+@dp.message(lambda message: message.text.startswith("Завершить заказ №") if message.text else None)
+async def finish_order(message: types.Message, state: FSMContext):
+    order_id = message.text.split()[3]
+    await state.update_data(order_id=order_id)
+
+    finish_keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Завершить")],
+        ],
+        resize_keyboard=True,
+    )
+
+    await message.answer(
+        "Для завершения заказа, прикрепите изображение(я) с выполненной работой.",
+        reply_markup=finish_keyboard,
+    )
+
+
+@dp.message(lambda message: message.text == "Завершить")
+async def process_finish_order(message: types.Message, state: FSMContext):
+    order_data = await state.get_data()
+    order_id = order_data.get('order_id')
+
+    images = order_data.get('images', [])
+
+    if images:
+        response = requests.patch(f'{API_URL}/orders/{order_id}/',
+                                  json={'images': images,
+                                        'status': OrderStatusEnum.COMPLETED.name})
+
+        if response.status_code == 200:
+            await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
+            main_keyboard = get_main_keyboard()
+            await message.answer(
+                "Выберите действие:",
+                reply_markup=main_keyboard,
+            )
+            await state.clear()
+        else:
+            await message.answer("Произошла ошибка при завершении заказа. Попробуйте позже.")
+    else:
+        await message.answer("Пожалуйста, прикрепите фотографии перед завершением заказа.")
+
+
+@dp.message(F.photo)
+async def handle_completed_order(message: types.Message, state: FSMContext):
+    order_data = await state.get_data()
+    order_id = order_data.get('order_id')
+
+    if order_id:
+        images = order_data.get('images')
+        if not images:
+            images = []
+
+        file_info = await bot.get_file(message.photo[0].file_id)
+        file_path = file_info.file_path
+
+        file_extension = os.path.splitext(file_path)[1]
+
+        file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
+        response = requests.get(file_url)
+        file_name = f"{message.photo[0].file_id}{file_extension}"
+
+        if response.status_code == 200:
+            with open(os.path.join('media', file_name), 'wb') as file:
+                file.write(response.content)
+
+            images.append({"file": file_name, "original_name": file_path})
+            await state.update_data(images)
+        else:
+            await message.answer("Ошибка отправки фото")
+    else:
+        await message.answer("Выберите заказ для завершения")
 
 
 async def main():
