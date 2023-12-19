@@ -71,6 +71,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'create': CemeteryPlotCreateSerializer,
         'update': CemeteryPlotUpdateSerializer,
         'retrieve': CemeteryPlotRetrieveSerializer,
+        'public': CemeteryPlotRetrieveSerializer,
         'filter': CemeteryPlotFilterSerializers
     }
 
@@ -88,3 +89,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
+    def public(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
