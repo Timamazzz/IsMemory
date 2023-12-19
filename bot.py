@@ -83,13 +83,6 @@ async def get_user_orders(chat_id):
     return orders
 
 
-@dp.message(lambda message: message.text.startswith("Завершить заказ №"))
-async def finish_order(message: types.Message, state: FSMContext):
-    order_id = message.text.split()[3]
-    await state.update_data(order_id=order_id)
-    await message.answer("Для завершения заказа, прикрепите изображение(я) с выполненной работой.")
-
-
 @dp.message(Command("reset_state"))
 async def reset_state(message: types.Message, state: FSMContext):
     await state.clear()
@@ -165,14 +158,12 @@ async def view_order_details(message: types.Message):
 async def finish_order(message: types.Message, state: FSMContext):
     order_id = message.text.split()[3]
     await state.update_data(order_id=order_id)
-
     finish_keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Завершить")],
         ],
         resize_keyboard=True,
     )
-
     await message.answer(
         "Для завершения заказа, прикрепите изображение(я) с выполненной работой.",
         reply_markup=finish_keyboard,
