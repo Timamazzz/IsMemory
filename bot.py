@@ -32,15 +32,6 @@ def get_main_keyboard():
     return builder.as_markup(resize_keyboard=True)
 
 
-@dp.message(lambda message: message.text == "Вернуться в главное меню")
-async def back_to_main_menu(message: types.Message):
-    main_keyboard = get_main_keyboard()
-    await message.answer(
-        "Выберите действие:",
-        reply_markup=main_keyboard,
-    )
-
-
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     builder = ReplyKeyboardBuilder()
@@ -81,12 +72,6 @@ async def get_user_orders(chat_id):
     response = requests.get(f'{API_URL}/orders/get_orders_by_chat_id/', params={'chat_id': chat_id})
     orders = response.json() if response.status_code == 200 else None
     return orders
-
-
-@dp.message(Command("reset_state"))
-async def reset_state(message: types.Message, state: FSMContext):
-    await state.clear()
-    await message.answer("Состояние сброшено.")
 
 
 @dp.message(lambda message: message.text == "Заказы")
@@ -174,7 +159,6 @@ async def finish_order(message: types.Message, state: FSMContext):
 async def process_finish_order(message: types.Message, state: FSMContext):
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
-
     images = order_data.get('images', [])
 
     if images:
@@ -200,7 +184,6 @@ async def process_finish_order(message: types.Message, state: FSMContext):
 async def handle_completed_order(message: types.Message, state: FSMContext):
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
-
     if order_id:
         images = order_data.get('images')
         if not images:
@@ -220,7 +203,7 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
                 file.write(response.content)
 
             images.append({"file": file_name, "original_name": file_path})
-            await state.update_data(images)
+            await state.update_data(images=images)
         else:
             await message.answer("Ошибка отправки фото")
     else:
