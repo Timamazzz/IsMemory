@@ -79,8 +79,6 @@ class Order(models.Model):
                 url_req = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + notification_text
                 results = requests.get(url_req)
 
-
-
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'

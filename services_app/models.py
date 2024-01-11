@@ -8,7 +8,6 @@ class Service(models.Model):
     description = models.TextField(verbose_name='Описание')
 
     is_multiple_price = models.BooleanField(default=False, verbose_name='Множественная цена')
-    count = models.PositiveIntegerField(default=1, verbose_name='Количество')
 
     class Meta:
         verbose_name = 'Услуга'
