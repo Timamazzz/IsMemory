@@ -63,6 +63,7 @@ class Order(models.Model):
     )
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь', )
+    count = models.PositiveIntegerField(default=1, null=True, blank=True, verbose_name='Количество')
 
     def __str__(self):
         date_str = self.date.strftime("%d-%m-%Y") if self.date else ''

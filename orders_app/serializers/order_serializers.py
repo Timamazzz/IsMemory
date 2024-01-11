@@ -43,7 +43,7 @@ class OrderListSerializer(OrderSerializer):
 class OrderCreateSerializer(OrderSerializer):
     class Meta:
         model = Order
-        fields = ['service', 'status', 'deceased', 'user']
+        fields = ['service', 'status', 'deceased', 'count', 'user']
 
 
 class OrderImageSerializerWriter(WritableNestedModelSerializer):
