@@ -26,7 +26,7 @@ class Command(BaseCommand):
             total_pages = 1
             for page_num in range(1, total_pages + 1):
                 self.stdout.write(self.style.SUCCESS(f'Processing page {page_num} of {total_pages}'))
-                url = f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={i}'
+                url = f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={page_num}'
                 page = requests.get(url, headers=headers)
                 soup = BeautifulSoup(page.text, 'html.parser')
 
