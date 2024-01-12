@@ -56,13 +56,13 @@ class Command(BaseCommand):
                             coordinates_str = soup.find('h6', text='Место захоронения').find_next('p').text.strip()
                             coordinates = [float(coord.strip()) for coord in coordinates_str.split(',')]
 
-                            coordinates_array = [
+                            coordinates_array = [[
                                 [coordinates[0] + 0.000009, coordinates[1] + 0.000009],
                                 [coordinates[0] + 0.000009, coordinates[1] - 0.000009],
                                 [coordinates[0] - 0.000009, coordinates[1] - 0.000009],
                                 [coordinates[0] - 0.000009, coordinates[1] + 0.000009],
                                 [coordinates[0] + 0.000009, coordinates[1] + 0.000009]
-                            ]
+                            ]]
 
                             cemetery_plot = CemeteryPlot.objects.create(
                                 cemetery=cemetery,
