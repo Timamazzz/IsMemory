@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from deceased_app.serializers.deceased_serializers import DeceasedFromCemeteryPlotSerializer
+from docs_app.models import CemeteryPlotImage
 from locations_app.models import CemeteryPlot
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -32,6 +33,11 @@ class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
 
 class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
+    image_urls = serializers.SerializerMethodField()
+
+    def get_image_urls(self, obj):
+        images = CemeteryPlotImage.objects.filter(cemetery_plot=obj)
+        return [image.file.url for image in images]
 
     class Meta:
         model = CemeteryPlot
