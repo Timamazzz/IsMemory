@@ -4,36 +4,21 @@ from orders_app.models import Order
 
 
 # Create your models here.
-class CemeteryDoc(models.Model):
-    cemetery = models.ForeignKey(Cemetery, null=True, blank=True, on_delete=models.CASCADE)
-    file = models.FileField("Файл договора", null=True, blank=True)
-    uploaded_at = models.DateTimeField("Дата загрузки", auto_now_add=True, null=True,
-                                       blank=True)
-    original_name = models.CharField("Оригинальное имя", max_length=255, null=True, blank=True)
-
-    class Meta:
-        app_label = 'docs_app'
-        verbose_name = "Файл кладбища"
-        verbose_name_plural = "Файлы кладбища"
-
-    def __str__(self):
-        return self.file.url or "Файл к кладбищу"
-
-
-class CemeteryPlotDoc(models.Model):
+class CemeteryPlotImage(models.Model):
     cemetery_plot = models.ForeignKey(CemeteryPlot, null=True, blank=True, on_delete=models.CASCADE)
-    file = models.FileField("Файл договора", null=True, blank=True)
+    file = models.FileField("Изображение участка", null=True, blank=True)
     uploaded_at = models.DateTimeField("Дата загрузки", auto_now_add=True, null=True,
                                        blank=True)
     original_name = models.CharField("Оригинальное имя", max_length=255, null=True, blank=True)
+    is_preview = models.BooleanField("Главное изображение", default=False, null=True, blank=True)
 
     class Meta:
         app_label = 'docs_app'
-        verbose_name = "Файл участка кладбища"
-        verbose_name_plural = "Файлы участка кладбища"
+        verbose_name = "Изображение участка кладбища"
+        verbose_name_plural = "Изображения участка кладбища"
 
     def __str__(self):
-        return self.file.url or "Файл к участку кладбища"
+        return self.file.url or "Изображение участка кладбища"
 
 
 class OrderImage(models.Model):
