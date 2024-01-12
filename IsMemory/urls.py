@@ -19,6 +19,7 @@ from django.urls import path, include, re_path
 from django.views.static import serve
 
 from IsMemory import settings
+from IsMemory.helpers.FileUploadView import FileUploadView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('api/services/', include('services_app.urls')),
     path('api/orders/', include('orders_app.urls')),
     re_path(r'^media/(?P<path>.*)$', serve,
-         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+            {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+    path('upload/', FileUploadView.as_view(), name='file-upload'),
 ]

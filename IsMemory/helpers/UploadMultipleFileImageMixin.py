@@ -47,9 +47,9 @@ class UploadMultipleFileImageMixin:
             original_name = file_item.name
             file_extension = os.path.splitext(original_name)[-1].lower()
 
-            slugified_name = slugify(original_name)
+            slug_filed_name = slugify(original_name)
 
-            file_name = get_valid_filename(slugified_name)
+            file_name = get_valid_filename(slug_filed_name)
             file_name = default_storage.save(file_name, file_item)
 
             file_url = default_storage.url(file_name)
