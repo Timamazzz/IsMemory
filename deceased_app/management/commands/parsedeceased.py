@@ -34,6 +34,7 @@ class Command(BaseCommand):
                     ending='\r'
                 )
                 self.stdout.flush()
+                self.stdout.write("")
                 url = f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={page_num}'
                 page = requests.get(url, headers=headers)
                 soup = BeautifulSoup(page.text, 'html.parser')
@@ -105,7 +106,7 @@ class Command(BaseCommand):
                                     file_path = default_storage.save(file_name, ContentFile(decoded_data))
 
                                     cemetery_plot_image = CemeteryPlotImage.objects.create(
-                                        land_plot=cemetery_plot,
+                                        cemetery_plot=cemetery_plot,
                                         file=file_path,
                                         original_name=file_name
                                     )
