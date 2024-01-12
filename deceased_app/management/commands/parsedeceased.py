@@ -110,6 +110,7 @@ class Command(BaseCommand):
                                         file=file_path,
                                         original_name=file_name
                                     )
+                self.stdout.write("")
 
             end_time = time.time()
             elapsed_time = end_time - start_time
