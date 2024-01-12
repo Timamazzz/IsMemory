@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from locations_app.models import Cemetery, CemeteryPlot
 from orders_app.models import Order
@@ -11,6 +12,20 @@ class CemeteryPlotImage(models.Model):
                                        blank=True)
     original_name = models.CharField("Оригинальное имя", max_length=255, null=True, blank=True)
     is_preview = models.BooleanField("Главное изображение", default=False, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        existing_preview = CemeteryPlotImage.objects.filter(
+            cemetery_plot=self.cemetery_plot,
+            is_preview=True
+        ).exclude(id=self.id).first()
+
+        if existing_preview and self.is_preview:
+            raise ValidationError("Only one image can be set as preview for a CemeteryPlot.")
+
+        if not existing_preview:
+            self.is_preview = True
+
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'docs_app'
