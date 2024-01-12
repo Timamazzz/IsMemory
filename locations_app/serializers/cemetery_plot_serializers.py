@@ -31,13 +31,20 @@ class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
         fields = '__all__'
 
 
+class CemeteryPlotImageSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CemeteryPlotImage
+        fields = ['url', 'is_preview']
+
+    def get_url(self, obj):
+        return obj.file.url
+
+
 class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
-    images = serializers.SerializerMethodField()
-
-    def get_images(self, obj):
-        images = CemeteryPlotImage.objects.filter(cemetery_plot=obj)
-        return [image.file.url for image in images]
+    images = CemeteryPlotImageSerializer(many=True, read_only=True, source='images')
 
     class Meta:
         model = CemeteryPlot

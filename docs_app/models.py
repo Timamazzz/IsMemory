@@ -6,7 +6,7 @@ from orders_app.models import Order
 
 # Create your models here.
 class CemeteryPlotImage(models.Model):
-    cemetery_plot = models.ForeignKey(CemeteryPlot, null=True, blank=True, on_delete=models.CASCADE)
+    cemetery_plot = models.ForeignKey(CemeteryPlot, null=True, blank=True, on_delete=models.CASCADE, related_name='images')
     file = models.FileField("Изображение участка", null=True, blank=True)
     uploaded_at = models.DateTimeField("Дата загрузки", auto_now_add=True, null=True,
                                        blank=True)
