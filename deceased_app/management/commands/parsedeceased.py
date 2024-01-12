@@ -23,14 +23,18 @@ class Command(BaseCommand):
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
-
-            for i in range(1, 2):
+            total_pages = 1
+            for page_num in range(1, total_pages + 1):
+                self.stdout.write(self.style.SUCCESS(f'Processing page {page_num} of {total_pages}'))
                 url = f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={i}'
                 page = requests.get(url, headers=headers)
                 soup = BeautifulSoup(page.text, 'html.parser')
 
                 items = soup.find_all('a', class_='new-search-results-item')
-                for item in items:
+                total_items = len(items)
+                for item_num, item in enumerate(items, start=1):
+                    self.stdout.write(self.style.SUCCESS(f'Processing item {item_num} of {total_items}'))
+
                     deceased_url = item['href']
                     deceased_response = requests.get(deceased_url, headers=headers)
                     soup = BeautifulSoup(deceased_response.text, 'html.parser')
