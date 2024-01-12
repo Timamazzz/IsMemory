@@ -1,5 +1,6 @@
 import base64
 import imghdr
+from datetime import datetime
 
 from django.core.management.base import BaseCommand
 import requests
@@ -40,12 +41,15 @@ class Command(BaseCommand):
                         dob = soup.find('h6', text='Дата рождения').find_next('p').text.strip()
                         dod = soup.find('h6', text='Дата смерти').find_next('p').text.strip()
 
+                        dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
+                        dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
+
                         deceased = Deceased.objects.create(
                             first_name=fio.split()[0] if len(fio.split()) > 0 else None,
                             last_name=fio.split()[2] if len(fio.split()) > 2 else None,
                             patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
-                            birth_date=dob,
-                            death_date=dod
+                            birth_date=dob_formatted,
+                            death_date=dod_formatted
                         )
 
                         if deceased:
