@@ -101,24 +101,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             "capture": True,
             "description": f"Заказ № {order_instance.id}",
             "idempotence_key": idempotence_key,
-            "receipt": {
-                "customer": {
-                    "full_name": request.user.last_name + request.user.first_name + request.user.patronymic,
-                    "email": request.user.email,
-                    "phone": request.user.phone_number,
-                },
-                "items": [
-                    {
-                        "description": service.description,
-                        "quantity": f"{data['count']}",
-                        "amount": {
-                            "value": f"{decimal.Decimal(data['count']) * service.price}",
-                            "currency": "RUB"
-                        }
-                    }
-                ]
-            }
-
         }, idempotence_key)
 
         order_instance.payment_id = payment.id
