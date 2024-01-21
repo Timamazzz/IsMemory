@@ -127,7 +127,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         logger = logging.getLogger(__name__)
         logger.info(f"This is payments")
 
-        data = request.data.object
+        data = request.data['object']
         logger.info(f"data", data)
         file_path = '/sites/IsMemory/IsMemory/order.txt'
         with open(file_path, 'w') as file:
