@@ -123,6 +123,10 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
     def payments(self, request, *args, **kwargs):
         event_json = json.loads(request.data)
 
+        file_path = '/sites/IsMemory/IsMemory/order.txt'
+        with open(file_path, 'w') as file:
+            file.write(str(event_json))
+
         notification_object = WebhookNotificationFactory().create(event_json)
         response_object = notification_object.object
 
@@ -135,16 +139,11 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             order.status = OrderStatusEnum.CANCELLED.name
             order.save()
 
-        file_path = '/sites/IsMemory/IsMemory/order.txt'
-        with open(file_path, 'w') as file:
-            file.write(str(order))
-
         return Response({
             'detail': 'Order status updated successfully',
             'order_id': order.id,
             'new_status': order.status,
         }, status=status.HTTP_200_OK)
-
 
     # @action(detail=False, methods=['POST'])
     # def payments(self, request, *args, **kwargs):
