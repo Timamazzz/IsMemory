@@ -131,12 +131,12 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         with open(file_path, 'w') as file:
             json.dump(data, file)
 
-        order = get_object_or_404(Order, id=data.metadata.payment_id)
+        order = get_object_or_404(Order, id=data.object.metadata.payment_id)
 
-        if data.status == 'succeeded':
+        if data.object.status == 'succeeded':
             order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
             order.save()
-        elif data.status == 'canceled':
+        elif data.object.status == 'canceled':
             order.status = OrderStatusEnum.CANCELLED.name
             order.save()
 
