@@ -132,8 +132,9 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             'order': order,
         }
         file_path = '/sites/IsMemory/IsMemory/payments.json'
-        with open(file_path, 'w') as json_file:
-            json.dump(result_data, json_file)
+
+        with open(file_path, 'w') as file:
+            file.write(str(result_data))
 
         return Response({
             'detail': 'Order status updated successfully',
