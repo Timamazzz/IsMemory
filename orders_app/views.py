@@ -84,10 +84,10 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         order_serializer.is_valid(raise_exception=True)
         order_instance = self.perform_create(order_serializer)
 
-        Configuration.account_id = '307382'
-        Configuration.secret_key = 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q'
+        Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
 
         service = Service.objects.get(id=data['service'])
+        idempotence_key = str(uuid.uuid4())
         payment = Payment.create({
             "amount": {
                 "value": f"{decimal.Decimal(data['count']) * service.price}",
@@ -98,8 +98,9 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
                 "return_url": "https://belmemorial.ru/account"
             },
             "capture": True,
-            "description": f""
-        }, uuid.uuid4())
+            "description": f"Заказ № {order_instance.id}"
+
+        }, idempotence_key)
 
         order_instance.payment_id = payment.id
         order_instance.save()
