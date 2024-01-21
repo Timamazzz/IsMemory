@@ -118,7 +118,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
     def payments(self, request, *args, **kwargs):
         data = request.data.object.copy()
 
-        file_path = '/sites/IsMemory/IsMemory/data.json'
+        file_path = '/sites/IsMemory/IsMemory/data.txt'
         with open(file_path, 'w') as file:
             file.write(str(data))
 
@@ -131,7 +131,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             order.status = OrderStatusEnum.CANCELLED.name
             order.save()
 
-        file_path = '/sites/IsMemory/IsMemory/data.json'
+        file_path = '/sites/IsMemory/IsMemory/order.txt'
         with open(file_path, 'w') as file:
             file.write(str(order))
 
