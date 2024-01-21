@@ -39,9 +39,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         else:
             return Order.objects.filter(user=self.request.user)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     @action(detail=False, methods=['GET'])
     def get_orders_by_chat_id(self, request, *args, **kwargs):
         chat_id = request.query_params.get('chat_id')
@@ -74,6 +71,9 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
         return Response(serializer.data)
 
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         serializer = self.get_serializer(data=data)
@@ -83,6 +83,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         order_serializer.is_valid(raise_exception=True)
         order_instance = self.perform_create(order_serializer)
 
+        print('order_instance', order_instance)
         Configuration.account_id = '307382'
         Configuration.secret_key = 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q'
 
