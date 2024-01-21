@@ -104,9 +104,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
         headers = self.get_success_headers(serializer.data)
         response = {
-            'order': {
-                data
-            },
+            'order': data,
             'redirect': {
                 'url': payment.confirmation.confirmation_url
             }
