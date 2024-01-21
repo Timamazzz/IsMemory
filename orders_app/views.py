@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from yookassa.domain.notification import WebhookNotificationFactory, WebhookNotificationEventType
 
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from IsMemory.helpers.UploadMultipleFileImageMixin import UploadMultipleFileImageMixin
@@ -116,32 +117,65 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
         return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
+    # @action(detail=False, methods=['POST'])
+    # def payments(self, request, *args, **kwargs):
+    #     data = request.data.object.copy()
+    #
+    #     file_path = '/sites/IsMemory/IsMemory/data.txt'
+    #     with open(file_path, 'w') as file:
+    #         file.write(str(data))
+    #
+    #     order = get_object_or_404(Order, payment_id=data.id)
+    #
+    #     if data.status == 'succeeded':
+    #         order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
+    #         order.save()
+    #     elif data.status == 'canceled':
+    #         order.status = OrderStatusEnum.CANCELLED.name
+    #         order.save()
+    #
+    #     file_path = '/sites/IsMemory/IsMemory/order.txt'
+    #     with open(file_path, 'w') as file:
+    #         file.write(str(order))
+    #
+    #     return Response({
+    #         'detail': 'Order status updated successfully',
+    #         'order_id': order.id,
+    #         'new_status': order.status,
+    #     }, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
-        data = request.data.object.copy()
+        event_json = json.loads(request.data)
+        try:
+            # Создание объекта класса уведомлений в зависимости от события
+            notification_object = WebhookNotificationFactory().create(event_json)
+            response_object = notification_object.object
+            if notification_object.event == WebhookNotificationEventType.PAYMENT_SUCCEEDED or notification_object.event == WebhookNotificationEventType.PAYMENT_CANCELED:
+                some_data = {
+                    'paymentId': response_object.id,
+                    'paymentStatus': response_object.status,
+                }
+            else:
+                return Response(status=400)
 
-        file_path = '/sites/IsMemory/IsMemory/data.txt'
-        with open(file_path, 'w') as file:
-            file.write(str(data))
+            Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
+            payment_info = Payment.find_one(some_data['paymentId'])
+            if payment_info:
+                payment_status = payment_info.status
+                order = Order.objects.get(payment_id=some_data['paymentId'])
+                if payment_info.status == 'succeeded':
+                    order.status = OrderStatusEnum.IN_QUEUE.name
+                elif payment_info.status == 'canceled':
+                    order.status = OrderStatusEnum.CANCELLED.name
+                order.save()
+            else:
+                return Response(status=400)
 
-        order = get_object_or_404(Order, payment_id=data.id)
+        except Exception:
+            return Response(status=400)
 
-        if data.status == 'succeeded':
-            order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
-            order.save()
-        elif data.status == 'canceled':
-            order.status = OrderStatusEnum.CANCELLED.name
-            order.save()
-
-        file_path = '/sites/IsMemory/IsMemory/order.txt'
-        with open(file_path, 'w') as file:
-            file.write(str(order))
-
-        return Response({
-            'detail': 'Order status updated successfully',
-            'order_id': order.id,
-            'new_status': order.status,
-        }, status=status.HTTP_200_OK)
+        return Response(status=200)
 
 
 class ExecutorViewSet(CustomModelViewSet):
