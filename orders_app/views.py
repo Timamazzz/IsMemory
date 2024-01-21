@@ -114,36 +114,43 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
         return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
+    # @action(detail=False, methods=['POST'])
+    # def payments(self, request, *args, **kwargs):
+    #     data = request.data.object.copy()
+    #
+    #     order = get_object_or_404(Order, payment_id=data.id)
+    #
+    #     if data.status == 'succeeded':
+    #         order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
+    #         order.save()
+    #     elif data.status == 'canceled':
+    #         order.status = OrderStatusEnum.CANCELLED.name
+    #         order.save()
+    #
+    #     return Response({
+    #         'detail': 'Order status updated successfully',
+    #         'order_id': order.id,
+    #         'new_status': order.status,
+    #     }, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
-        data = request.data.object.copy()
+        data = request.data
 
-        order = get_object_or_404(Order, payment_id=data.id)
-
-        if data.status == 'succeeded':
-            order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
-            order.save()
-        elif data.status == 'canceled':
-            order.status = OrderStatusEnum.CANCELLED.name
-            order.save()
-
-        result_data = {
-            'data': data,
-            'order': order,
-        }
-
+        # Получите путь к папке проекта
         project_folder = os.path.dirname(os.path.abspath(__file__))
-        file_name = 'payments.txt'
+
+        # Задайте имя файла
+        file_name = 'received_data.txt'
+
+        # Сформируйте полный путь к файлу
         file_path = os.path.join(project_folder, file_name)
 
+        # Запишите данные в файл
         with open(file_path, 'w') as file:
-            file.write(str(result_data))
+            file.write(str(data))
 
-        return Response({
-            'detail': 'Order status updated successfully',
-            'order_id': order.id,
-            'new_status': order.status,
-        }, status=status.HTTP_200_OK)
+        return Response({'status': 'Data received and saved successfully'}, status=status.HTTP_200_OK)
 
 
 class ExecutorViewSet(CustomModelViewSet):
