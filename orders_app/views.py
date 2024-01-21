@@ -98,7 +98,8 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
                 "return_url": "https://belmemorial.ru/account"
             },
             "capture": True,
-            "description": f"Заказ № {order_instance.id}"
+            "description": f"Заказ № {order_instance.id}",
+            "idempotence_key": idempotence_key
 
         }, idempotence_key)
 
