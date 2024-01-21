@@ -133,7 +133,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         }
 
         project_folder = os.path.dirname(os.path.abspath(__file__))
-        file_name = 'payments.json'
+        file_name = 'payments.txt'
         file_path = os.path.join(project_folder, file_name)
 
         with open(file_path, 'w') as file:
