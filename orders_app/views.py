@@ -122,15 +122,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
-        logger = logging.getLogger(__name__)
-        logger.info("This is payments")
-        print("This is payments")
-
         data = request.data
-        print("data: %s", json.dumps(data))
-        file_path = '/sites/IsMemory/IsMemory/order.json'
-        with open(file_path, 'w') as file:
-            json.dump(data, file)
 
         order = get_object_or_404(Order, id=data['object']['metadata']['payment_id'])
 
@@ -141,7 +133,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             order.status = OrderStatusEnum.CANCELLED.name
             order.save()
 
-        logger.info(f"Order status updated successfully. Order ID: {order.id}, New Status: {order.status}")
         return Response({
             'detail': 'Order status updated successfully',
             'order_id': order.id,
