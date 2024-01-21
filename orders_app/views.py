@@ -3,6 +3,7 @@ import os
 import uuid
 
 from django.contrib.auth.models import AnonymousUser
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -105,13 +106,22 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
-        data = request.data
-        project_folder = os.path.dirname(os.path.abspath(__file__))
-        file_name = 'received_data.txt'
-        file_path = os.path.join(project_folder, file_name)
-        with open(file_path, 'w') as file:
-            file.write(str(data))
-        return Response({'status': 'Data received and saved successfully'}, status=status.HTTP_200_OK)
+        data = request.data.object.copy()
+
+        order = get_object_or_404(Order, payment_id=data.id)
+
+        if data.status == 'succeeded':
+            order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
+            order.save()
+        elif data.status == 'canceled':
+            order.status = OrderStatusEnum.CANCELLED.name
+            order.save()
+
+        return Response({
+            'detail': 'Order status updated successfully',
+            'order_id': order.id,
+            'new_status': order.status,
+        }, status=status.HTTP_200_OK)
 
 
 class ExecutorViewSet(CustomModelViewSet):
