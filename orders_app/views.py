@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.decorators import action
@@ -11,6 +14,10 @@ from orders_app.serializers.executor_serializers import (ExecutorSerializer, Exe
                                                          ExecutorSetDataSerializer)
 from orders_app.serializers.order_serializers import OrderSerializer, OrderCreateSerializer, OrderListSerializer, \
     OrderUpdateSerializer, OrderDetailSerializer
+
+from yookassa import Configuration, Payment
+
+from services_app.models import Service
 
 
 # Create your views here.
@@ -64,6 +71,46 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        data.update({'user': request.user.id})
+
+        Configuration.account_id = '307382'
+        Configuration.secret_key = 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q'
+
+        service = Service.objects.get(id=data['service'])
+        payment = Payment.create({
+            "amount": {
+                "value": f"{data['count'] * service.price}",
+                "currency": "RUB"
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://belmemorial.ru/account"
+            },
+            "capture": True,
+            "description": f""
+        }, uuid.uuid4())
+
+        data.update({'payment_id': payment.id})
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        response = serializer.data
+        response.update({'url': payment.confirmation.confirmation_url})
+        return Response(response, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(detail=False, methods=['POST'])
+    def payments(self, request, *args, **kwargs):
+        data = request.data
+        project_folder = os.path.dirname(os.path.abspath(__file__))
+        file_name = 'received_data.txt'
+        file_path = os.path.join(project_folder, file_name)
+        with open(file_path, 'w') as file:
+            file.write(str(data))
+        return Response({'status': 'Data received and saved successfully'}, status=status.HTTP_200_OK)
 
 
 class ExecutorViewSet(CustomModelViewSet):

@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 
 import requests
 from aiogram.enums import ParseMode
@@ -64,13 +65,13 @@ class Order(models.Model):
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь', )
     count = models.PositiveIntegerField(default=1, null=True, blank=True, verbose_name='Количество')
+    payment_id = models.UUIDField('Id оплаты на стороне кассы', editable=True, unique=True, null=True, blank=True)
 
     def __str__(self):
         date_str = self.date.strftime("%d-%m-%Y") if self.date else ''
         return f'Заказ №{self.id} {date_str}' or f"Заказа №{self.id}"
 
     def save(self, *args, **kwargs):
-        print(self)
         super().save(*args, **kwargs)
 
         if self.status == OrderStatusEnum.WORK_IN_PROGRESS.name and self.executor:
