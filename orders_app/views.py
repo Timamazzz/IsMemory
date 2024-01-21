@@ -151,7 +151,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         with open(file_path, 'w') as file:
             file.write(str(event_json))
         try:
-            # Создание объекта класса уведомлений в зависимости от события
             notification_object = WebhookNotificationFactory().create(event_json)
             response_object = notification_object.object
             file_path = '/sites/IsMemory/IsMemory/response_object.txt'
@@ -163,7 +162,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
                     'paymentStatus': response_object.status,
                 }
             else:
-                return Response(status=400)
+                return Response({}, status=400)
 
             Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
             payment_info = Payment.find_one(some_data['paymentId'])
@@ -181,13 +180,12 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
                     file.write(str(order))
                 order.save()
             else:
-                return Response(status=400)
+                return Response({}, status=400)
 
         except Exception:
-            return Response(status=400)
+            return Response({}, status=400)
 
-
-        return Response(status=200)
+        return Response({}, status=200)
 
 
 class ExecutorViewSet(CustomModelViewSet):
