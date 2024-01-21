@@ -44,6 +44,11 @@ class OrderCreateSerializer(OrderSerializer):
     class Meta:
         model = Order
         fields = ['service', 'deceased', 'count', 'user', 'payment_id']
+        extra_kwargs = {
+            'service': {'required': True},
+            'deceased': {'required': True},
+            'count': {'required': True},
+        }
 
 
 class OrderImageSerializerWriter(WritableNestedModelSerializer):
