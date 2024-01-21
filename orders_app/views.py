@@ -135,7 +135,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         order = get_object_or_404(Order, id=data['object']['metadata']['payment_id'])
 
         if data['object']['status'] == 'succeeded':
-            order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
+            order.status = OrderStatusEnum.IN_QUEUE.name
             order.save()
         elif data['object']['status'] == 'canceled':
             order.status = OrderStatusEnum.CANCELLED.name
