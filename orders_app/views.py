@@ -76,11 +76,12 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        data.update({'user': request.user.id})
-
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+
+        order_serializer = self.get_serializer(data=serializer.data)
+        order_serializer.is_valid(raise_exception=True)
+        order_instance = self.perform_create(order_serializer)
 
         Configuration.account_id = '307382'
         Configuration.secret_key = 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q'
@@ -99,8 +100,8 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             "description": f""
         }, uuid.uuid4())
 
-        data = serializer.data.copy()
-        data.update({'payment_id': payment.id})
+        order_instance.payment_id = payment.id
+        order_instance.save()
 
         headers = self.get_success_headers(serializer.data)
         response = {
