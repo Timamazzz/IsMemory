@@ -128,6 +128,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         logger.info(f"This is payments")
 
         data = request.data.object
+        logger.info(f"data", data)
         file_path = '/sites/IsMemory/IsMemory/order.txt'
         with open(file_path, 'w') as file:
             file.write(str(data))
