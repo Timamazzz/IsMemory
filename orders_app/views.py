@@ -147,10 +147,16 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
         event_json = json.loads(request.data)
+        file_path = '/sites/IsMemory/IsMemory/event_json.txt'
+        with open(file_path, 'w') as file:
+            file.write(str(event_json))
         try:
             # Создание объекта класса уведомлений в зависимости от события
             notification_object = WebhookNotificationFactory().create(event_json)
             response_object = notification_object.object
+            file_path = '/sites/IsMemory/IsMemory/response_object.txt'
+            with open(file_path, 'w') as file:
+                file.write(str(response_object))
             if notification_object.event == WebhookNotificationEventType.PAYMENT_SUCCEEDED or notification_object.event == WebhookNotificationEventType.PAYMENT_CANCELED:
                 some_data = {
                     'paymentId': response_object.id,
@@ -161,6 +167,9 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
             Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
             payment_info = Payment.find_one(some_data['paymentId'])
+            file_path = '/sites/IsMemory/IsMemory/payment_info.txt'
+            with open(file_path, 'w') as file:
+                file.write(str(payment_info))
             if payment_info:
                 payment_status = payment_info.status
                 order = Order.objects.get(payment_id=some_data['paymentId'])
@@ -168,12 +177,16 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
                     order.status = OrderStatusEnum.IN_QUEUE.name
                 elif payment_info.status == 'canceled':
                     order.status = OrderStatusEnum.CANCELLED.name
+                file_path = '/sites/IsMemory/IsMemory/data.txt'
+                with open(file_path, 'w') as file:
+                    file.write(str(order))
                 order.save()
             else:
                 return Response(status=400)
 
         except Exception:
             return Response(status=400)
+
 
         return Response(status=200)
 
