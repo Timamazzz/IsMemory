@@ -1,3 +1,4 @@
+import decimal
 import os
 import uuid
 
@@ -82,7 +83,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         service = Service.objects.get(id=data['service'])
         payment = Payment.create({
             "amount": {
-                "value": f"{data['count'] * service.price}",
+                "value": f"{data['count'] * decimal.Decimal(service.price)}",
                 "currency": "RUB"
             },
             "confirmation": {
