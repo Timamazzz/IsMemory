@@ -1,4 +1,5 @@
 import decimal
+import json
 import os
 import uuid
 
@@ -83,7 +84,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         order_serializer.is_valid(raise_exception=True)
         order_instance = self.perform_create(order_serializer)
 
-        print('order_instance', order_instance)
         Configuration.account_id = '307382'
         Configuration.secret_key = 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q'
 
@@ -126,6 +126,14 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         elif data.status == 'canceled':
             order.status = OrderStatusEnum.CANCELLED.name
             order.save()
+
+        result_data = {
+            'data': data,
+            'order': order,
+        }
+        file_path = '/sites/IsMemory/IsMemory/payments.json'
+        with open(file_path, 'w') as json_file:
+            json.dump(result_data, json_file)
 
         return Response({
             'detail': 'Order status updated successfully',
