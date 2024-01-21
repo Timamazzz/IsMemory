@@ -131,7 +131,10 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             'data': data,
             'order': order,
         }
-        file_path = '/sites/IsMemory/IsMemory/payments.json'
+
+        project_folder = os.path.dirname(os.path.abspath(__file__))
+        file_name = 'payments.json'
+        file_path = os.path.join(project_folder, file_name)
 
         with open(file_path, 'w') as file:
             file.write(str(result_data))
