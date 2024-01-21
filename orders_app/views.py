@@ -123,13 +123,13 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
         logger = logging.getLogger(__name__)
-        logger.info(f"This is payments")
+        logger.info("This is payments")
 
         data = request.data
-        logger.info("data", str(data))
-        file_path = '/sites/IsMemory/IsMemory/order.txt'
+        logger.info("data: %s", json.dumps(data))
+        file_path = '/sites/IsMemory/IsMemory/order.json'
         with open(file_path, 'w') as file:
-            file.write(str(data))
+            json.dump(data, file)
 
         order = get_object_or_404(Order, id=data.metadata.payment_id)
 
