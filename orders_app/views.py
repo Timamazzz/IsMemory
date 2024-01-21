@@ -101,6 +101,9 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             "capture": True,
             "description": f"Заказ № {order_instance.id}",
             "idempotence_key": idempotence_key,
+            "metadata": {
+                "payment_id": order_instance.id
+            }
         }, idempotence_key)
 
         order_instance.payment_id = payment.id
@@ -116,75 +119,75 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
 
         return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
-    # @action(detail=False, methods=['POST'])
-    # def payments(self, request, *args, **kwargs):
-    #     data = request.data.object.copy()
-    #
-    #     file_path = '/sites/IsMemory/IsMemory/data.txt'
-    #     with open(file_path, 'w') as file:
-    #         file.write(str(data))
-    #
-    #     order = get_object_or_404(Order, payment_id=data.id)
-    #
-    #     if data.status == 'succeeded':
-    #         order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
-    #         order.save()
-    #     elif data.status == 'canceled':
-    #         order.status = OrderStatusEnum.CANCELLED.name
-    #         order.save()
-    #
-    #     file_path = '/sites/IsMemory/IsMemory/order.txt'
-    #     with open(file_path, 'w') as file:
-    #         file.write(str(order))
-    #
-    #     return Response({
-    #         'detail': 'Order status updated successfully',
-    #         'order_id': order.id,
-    #         'new_status': order.status,
-    #     }, status=status.HTTP_200_OK)
-
     @action(detail=False, methods=['POST'])
     def payments(self, request, *args, **kwargs):
         event_json = json.loads(request.data)
-        file_path = '/sites/IsMemory/IsMemory/event_json.txt'
+
+        notification_object = WebhookNotificationFactory().create(event_json)
+        response_object = notification_object.object
+
+        order = get_object_or_404(Order, id=response_object.metadata.payment_id)
+
+        if response_object.status == 'succeeded':
+            order.status = OrderStatusEnum.WORK_IN_PROGRESS.name
+            order.save()
+        elif response_object.status == 'canceled':
+            order.status = OrderStatusEnum.CANCELLED.name
+            order.save()
+
+        file_path = '/sites/IsMemory/IsMemory/order.txt'
         with open(file_path, 'w') as file:
-            file.write(str(event_json))
-        try:
-            notification_object = WebhookNotificationFactory().create(event_json)
-            response_object = notification_object.object
-            file_path = '/sites/IsMemory/IsMemory/response_object.txt'
-            with open(file_path, 'w') as file:
-                file.write(str(response_object))
-            if notification_object.event == WebhookNotificationEventType.PAYMENT_SUCCEEDED or notification_object.event == WebhookNotificationEventType.PAYMENT_CANCELED:
-                some_data = {
-                    'paymentId': response_object.id,
-                    'paymentStatus': response_object.status,
-                }
-            else:
-                return Response({}, status=400)
+            file.write(str(order))
 
-            Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
-            payment_info = Payment.find_one(some_data['paymentId'])
-            file_path = '/sites/IsMemory/IsMemory/payment_info.txt'
-            with open(file_path, 'w') as file:
-                file.write(str(payment_info))
-            if payment_info:
-                order = Order.objects.get(payment_id=some_data['paymentId'])
-                if payment_info.status == 'succeeded':
-                    order.status = OrderStatusEnum.IN_QUEUE.name
-                elif payment_info.status == 'canceled':
-                    order.status = OrderStatusEnum.CANCELLED.name
-                file_path = '/sites/IsMemory/IsMemory/data.txt'
-                with open(file_path, 'w') as file:
-                    file.write(str(order))
-                order.save()
-            else:
-                return Response({}, status=400)
+        return Response({
+            'detail': 'Order status updated successfully',
+            'order_id': order.id,
+            'new_status': order.status,
+        }, status=status.HTTP_200_OK)
 
-        except Exception:
-            return Response({}, status=400)
 
-        return Response({}, status=200)
+    # @action(detail=False, methods=['POST'])
+    # def payments(self, request, *args, **kwargs):
+    #     event_json = json.loads(request.data)
+    #     file_path = '/sites/IsMemory/IsMemory/event_json.txt'
+    #     with open(file_path, 'w') as file:
+    #         file.write(str(event_json))
+    #     try:
+    #         notification_object = WebhookNotificationFactory().create(event_json)
+    #         response_object = notification_object.object
+    #         file_path = '/sites/IsMemory/IsMemory/response_object.txt'
+    #         with open(file_path, 'w') as file:
+    #             file.write(str(response_object))
+    #         if notification_object.event == WebhookNotificationEventType.PAYMENT_SUCCEEDED or notification_object.event == WebhookNotificationEventType.PAYMENT_CANCELED:
+    #             some_data = {
+    #                 'paymentId': response_object.id,
+    #                 'paymentStatus': response_object.status,
+    #             }
+    #         else:
+    #             return Response({}, status=400)
+    #
+    #         Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
+    #         payment_info = Payment.find_one(some_data['paymentId'])
+    #         file_path = '/sites/IsMemory/IsMemory/payment_info.txt'
+    #         with open(file_path, 'w') as file:
+    #             file.write(str(payment_info))
+    #         if payment_info:
+    #             order = Order.objects.get(payment_id=some_data['paymentId'])
+    #             if payment_info.status == 'succeeded':
+    #                 order.status = OrderStatusEnum.IN_QUEUE.name
+    #             elif payment_info.status == 'canceled':
+    #                 order.status = OrderStatusEnum.CANCELLED.name
+    #             file_path = '/sites/IsMemory/IsMemory/data.txt'
+    #             with open(file_path, 'w') as file:
+    #                 file.write(str(order))
+    #             order.save()
+    #         else:
+    #             return Response({}, status=400)
+    #
+    #     except Exception:
+    #         return Response({}, status=400)
+    #
+    #     return Response({}, status=200)
 
 
 class ExecutorViewSet(CustomModelViewSet):
