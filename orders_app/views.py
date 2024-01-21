@@ -87,7 +87,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         Configuration.configure('307382', 'test_3uCnUvpBAqwu2MFOFsyc-9ORVYRZPzcA_rMGX0AHB4Q')
 
         service = Service.objects.get(id=data['service'])
-        idempotence_key = str(uuid.uuid4())
+        idempotence_key = order_instance.id
         payment = Payment.create({
             "amount": {
                 "value": f"{decimal.Decimal(data['count']) * service.price}",
