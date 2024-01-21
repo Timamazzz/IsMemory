@@ -171,7 +171,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
             with open(file_path, 'w') as file:
                 file.write(str(payment_info))
             if payment_info:
-                payment_status = payment_info.status
                 order = Order.objects.get(payment_id=some_data['paymentId'])
                 if payment_info.status == 'succeeded':
                     order.status = OrderStatusEnum.IN_QUEUE.name
