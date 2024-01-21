@@ -83,7 +83,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         service = Service.objects.get(id=data['service'])
         payment = Payment.create({
             "amount": {
-                "value": f"{data['count'] * decimal.Decimal(service.price)}",
+                "value": f"{decimal.Decimal(data['count']) * service.price}",
                 "currency": "RUB"
             },
             "confirmation": {
