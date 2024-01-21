@@ -78,8 +78,6 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         return serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        logger = logging.getLogger(__name__)
-        logger.info(f"This is create")
         data = request.data.copy()
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -127,7 +125,7 @@ class OrderViewSet(CustomModelViewSet, UploadMultipleFileImageMixin):
         logger = logging.getLogger(__name__)
         logger.info(f"This is payments")
 
-        data = request.data['object']
+        data = request.data
         logger.info(f"data", data)
         file_path = '/sites/IsMemory/IsMemory/order.txt'
         with open(file_path, 'w') as file:
