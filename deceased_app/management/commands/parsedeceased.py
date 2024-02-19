@@ -13,6 +13,7 @@ from deceased_app.models import Deceased
 from docs_app.models import CemeteryPlotImage
 from locations_app.enums import CemeteryPlotTypeEnum, CemeteryPlotStatusEnum
 from locations_app.models import Cemetery, CemeteryPlot
+from tqdm import tqdm
 
 
 class Command(BaseCommand):
@@ -21,32 +22,22 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             cemetery = Cemetery.objects.get(pk=8)
-            start_time = time.time()
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                              'Chrome/91.0.4472.124 Safari/537.36'
             }
             total_pages = 3117
             loaded_deceased = 0
             loaded_plots = 0
-            for page_num in range(1, total_pages + 1):
-                self.stdout.write(
-                    self.style.SUCCESS(f'Processing page {(page_num / total_pages) * 100:.0f}%'),
-                    ending='\r'
-                )
-                self.stdout.flush()
-                self.stdout.write("")
-                url = f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={page_num}'
+            for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
+                url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
+                       f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
+                       f'о&page={page_num}')
                 page = requests.get(url, headers=headers)
                 soup = BeautifulSoup(page.text, 'html.parser')
 
                 items = soup.find_all('a', class_='new-search-results-item')
-                total_items = len(items)
                 for item_num, item in enumerate(items, start=1):
-                    self.stdout.write(
-                        self.style.SUCCESS(f'Processing item {(item_num / total_items) * 100:.0f}%'),
-                        ending='\r'
-                    )
-                    self.stdout.flush()
                     deceased_url = item['href']
                     deceased_response = requests.get(deceased_url, headers=headers)
                     soup = BeautifulSoup(deceased_response.text, 'html.parser')
@@ -116,18 +107,14 @@ class Command(BaseCommand):
                                     file_name = f'after_parse_image_{datetime.now().strftime("%Y%m%d%H%M%S")}.{image_format}'
                                     file_path = default_storage.save(file_name, ContentFile(compressed_data))
 
-                                    cemetery_plot_image = CemeteryPlotImage.objects.create(
+                                    CemeteryPlotImage.objects.create(
                                         cemetery_plot=cemetery_plot,
                                         file=file_path,
                                         original_name=file_name
                                     )
-                self.stdout.write("")
 
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            print(f'Total execution time: {elapsed_time} seconds')
-            print(f'Total loaded deceased: {loaded_deceased}')
-            print(f'Total loaded plots: {loaded_plots}')
+            self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
+            self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
