@@ -9,7 +9,7 @@ headers = {
 }
 
 for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
-    url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
+    url = (f'https://172.16.180.167/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
            f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
            f'о&page={page_num}')
     page = requests.get(url, headers=headers)
