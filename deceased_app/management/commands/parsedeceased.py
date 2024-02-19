@@ -53,7 +53,7 @@ class Command(BaseCommand):
                         dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
                         dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
 
-                        deceased = Deceased.objects.get_or_create(
+                        deceased, created = Deceased.objects.get_or_create(
                             first_name=fio.split()[0] if len(fio.split()) > 0 else None,
                             last_name=fio.split()[2] if len(fio.split()) > 2 else None,
                             patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
@@ -74,7 +74,7 @@ class Command(BaseCommand):
                                 [coordinates[0] + 0.000009, coordinates[1] + 0.000009]
                             ]]
 
-                            cemetery_plot = CemeteryPlot.objects.get_or_create(
+                            cemetery_plot, created = CemeteryPlot.objects.get_or_create(
                                 cemetery=cemetery,
                                 coordinates=coordinates_array,
                                 type=CemeteryPlotTypeEnum.BURIAL.name,
