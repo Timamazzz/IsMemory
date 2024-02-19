@@ -72,6 +72,6 @@ class Command(BaseCommand):
             Service.objects.get_or_create(**service_data)
 
         if not CustomUser.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@admin.com', 'admin')
+            CustomUser.objects.create_superuser('admin', 'admin@admin.com', 'admin')
 
         self.stdout.write(self.style.SUCCESS('Database initialized successfully'))
