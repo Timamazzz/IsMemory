@@ -3,7 +3,6 @@ from users_app.models import CustomUser
 from locations_app.models import Cemetery, Municipality
 from locations_app.enums import CemeteryStatusEnum
 from services_app.models import Service
-from deceased_app.enums import CemeteryStatusEnum
 from datetime import datetime
 
 
