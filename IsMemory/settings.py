@@ -194,35 +194,35 @@ EMAIL_HOST_USER = '89205731783@mail.ru'
 # EMAIL_HOST_PASSWORD = 'Astra1988!'
 EMAIL_HOST_PASSWORD = 'd0583b8b07be826de4da838a26c60cd5'
 
-BASE_LOG_DIR = os.path.join(BASE_DIR, 'logs')
-
-if not os.path.exists(BASE_LOG_DIR):
-    os.makedirs(BASE_LOG_DIR)
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_LOG_DIR, 'debug.log'),
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'orders_app': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
+# BASE_LOG_DIR = os.path.join(BASE_DIR, 'logs')
+#
+# if not os.path.exists(BASE_LOG_DIR):
+#     os.makedirs(BASE_LOG_DIR)
+#
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(BASE_LOG_DIR, 'debug.log'),
+#         },
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'orders_app': {
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
