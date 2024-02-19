@@ -100,10 +100,10 @@ class Command(BaseCommand):
 
                                     max_size = (800, 600)
 
-                                    img.thumbnail(max_size, Image.ANTIALIAS)
+                                    img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
                                     output_buffer = io.BytesIO()
-                                    img.save(output_buffer, format=image_format)
+                                    img.save(output_buffer, optimize=True, quality=95, format=image_format)
                                     output_buffer.seek(0)
                                     compressed_data = output_buffer.getvalue()
 
