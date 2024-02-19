@@ -15,6 +15,7 @@ from locations_app.enums import CemeteryPlotTypeEnum, CemeteryPlotStatusEnum
 from locations_app.models import Cemetery, CemeteryPlot
 from tqdm import tqdm
 from PIL import Image
+import io
 
 
 class Command(BaseCommand):
