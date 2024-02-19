@@ -102,8 +102,19 @@ class Command(BaseCommand):
                                     decoded_data = base64.b64decode(image_data)
                                     image_format = imghdr.what(None, h=decoded_data)
 
+                                    img = Image.open(io.BytesIO(decoded_data))
+
+                                    max_size = (800, 600)
+
+                                    img.thumbnail(max_size, Image.ANTIALIAS)
+
+                                    output_buffer = io.BytesIO()
+                                    img.save(output_buffer, format=image_format)
+                                    output_buffer.seek(0)
+                                    compressed_data = output_buffer.getvalue()
+
                                     file_name = f'after_parse_image_{datetime.now().strftime("%Y%m%d%H%M%S")}.{image_format}'
-                                    file_path = default_storage.save(file_name, ContentFile(decoded_data))
+                                    file_path = default_storage.save(file_name, ContentFile(compressed_data))
 
                                     cemetery_plot_image = CemeteryPlotImage.objects.create(
                                         cemetery_plot=cemetery_plot,
