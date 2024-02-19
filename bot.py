@@ -3,7 +3,6 @@ from datetime import datetime
 
 import requests
 import asyncio
-import logging
 from aiogram.filters.command import Command
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.context import FSMContext
@@ -18,7 +17,6 @@ API_URL = "https://belmemorial.ru/api"
 
 # API_URL = 'http://51.250.126.124:3031/api'
 
-logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -65,7 +63,6 @@ async def shared_contact(message: types.Message):
             await message.answer("Произошла ошибка при отправке данных. Попробуйте позже.")
     except Exception as e:
         await message.answer("Произошла ошибка. Попробуйте позже.")
-        logging.error(f"Error: {str(e)}")
 
 
 async def get_user_orders(chat_id):
