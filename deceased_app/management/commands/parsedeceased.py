@@ -16,6 +16,7 @@ from locations_app.models import Cemetery, CemeteryPlot
 from tqdm import tqdm
 from PIL import Image
 import io
+import re
 
 
 def parse_date(date_string):
