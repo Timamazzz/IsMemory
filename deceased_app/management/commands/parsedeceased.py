@@ -130,9 +130,11 @@ class Command(BaseCommand):
                                 )
                                 plot_images.append(plot_image)
 
+                self.stdout.write(self.style.SUCCESS(f'deceased_objects: {deceased_objects}'))
                 Deceased.objects.bulk_create(deceased_objects)
                 loaded_deceased += len(deceased_objects)
 
+                self.stdout.write(self.style.SUCCESS(f'plot_objects: {plot_objects}'))
                 CemeteryPlot.objects.bulk_create(plot_objects)
                 loaded_plots += len(plot_objects)
 
@@ -140,6 +142,7 @@ class Command(BaseCommand):
                     deceased.cemetery_plot = plot
                 Deceased.objects.bulk_update(deceased_objects, ['cemetery_plot'])
 
+                self.stdout.write(self.style.SUCCESS(f'plot_images: {plot_images}'))
                 CemeteryPlotImage.objects.bulk_create(plot_images)
                 loaded_images += len(plot_images)
 
