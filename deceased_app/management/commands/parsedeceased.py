@@ -51,8 +51,12 @@ class Command(BaseCommand):
                         dob = soup.find('h6', text='Дата рождения').find_next('p').text.strip()
                         dod = soup.find('h6', text='Дата смерти').find_next('p').text.strip()
 
-                        dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
-                        dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
+                        try:
+                            dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
+                            dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
+                        except ValueError as e:
+                            dob_formatted = None
+                            dod_formatted = None
 
                         deceased, created = Deceased.objects.get_or_create(
                             first_name=fio.split()[0] if len(fio.split()) > 0 else None,
