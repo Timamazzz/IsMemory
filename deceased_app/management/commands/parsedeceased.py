@@ -19,7 +19,7 @@ import io
 
 
 def format_date(date_str):
-    parts = date_str.split('-')
+    parts = date_str.split('.')
     if len(parts[0]) < 4:
         parts[0] = '0' * (4 - len(parts[0])) + parts[0]
     return '-'.join(parts)
