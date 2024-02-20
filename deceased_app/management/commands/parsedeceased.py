@@ -20,9 +20,11 @@ import io
 
 def format_date(date_str):
     parts = date_str.split('.')
-    if len(parts[0]) < 4:
-        parts[0] = '0' * (4 - len(parts[0])) + parts[0]
-    return '-'.join(parts[::-1])
+    year = parts[2].zfill(4)
+    month = parts[1].zfill(2)
+    day = parts[0].zfill(2)
+    return f"{year}-{month}-{day}"
+
 
 
 class Command(BaseCommand):
