@@ -126,6 +126,6 @@ class Command(BaseCommand):
                                 original_name=file_name
                             )
 
-    self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
-    self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
+        self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
+        self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
 
