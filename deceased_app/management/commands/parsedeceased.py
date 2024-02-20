@@ -19,11 +19,14 @@ import io
 
 
 def format_date(date_str):
+    if not date_str:
+        return None
     parts = date_str.split('.')
     year = parts[2].zfill(4)
     month = parts[1].zfill(2)
     day = parts[0].zfill(2)
     return f"{year}-{month}-{day}"
+
 
 
 
