@@ -140,15 +140,12 @@ class Command(BaseCommand):
 
             for plot, deceased in zip(created_plots, created_deceased):
                 deceased.cemetery_plot = plot
-                deceased.save()
+
+            Deceased.objects.bulk_update(created_deceased, ['cemetery_plot'])
 
             self.stdout.write(self.style.SUCCESS(f'plot_images: {plot_images}'))
             CemeteryPlotImage.objects.bulk_create(plot_images)
             loaded_images += len(plot_images)
-
-            self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
-            self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
-            self.stdout.write(self.style.SUCCESS(f'Total loaded images: {loaded_images}'))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
