@@ -1,6 +1,7 @@
 import base64
 import imghdr
 from datetime import datetime
+from dateutil import parser
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -53,31 +54,24 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'dob:{dob} dod:{dod}'))
 
                 try:
-                    dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
-                except ValueError as e:
+                    dob_formatted = parser.parse(dob).strftime("%Y-%m-%d") if dob else None
+                except ValueError:
                     dob_formatted = None
 
                 try:
-                    dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
-                except ValueError as e:
+                    dod_formatted = parser.parse(dod).strftime("%Y-%m-%d") if dod else None
+                except ValueError:
                     dod_formatted = None
 
                 self.stdout.write(self.style.SUCCESS(f'dob_formatted:{dob_formatted} dod:{dod_formatted}'))
 
-                try:
-                    deceased, created = Deceased.objects.get_or_create(
-                        first_name=fio.split()[0] if len(fio.split()) > 0 else None,
-                        last_name=fio.split()[2] if len(fio.split()) > 2 else None,
-                        patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
-                        birth_date=dob_formatted,
-                        death_date=dod_formatted
-                    )
-                except ValidationError as e:
-                    deceased, created = Deceased.objects.get_or_create(
-                        first_name=fio.split()[0] if len(fio.split()) > 0 else None,
-                        last_name=fio.split()[2] if len(fio.split()) > 2 else None,
-                        patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
-                    )
+                deceased, created = Deceased.objects.get_or_create(
+                    first_name=fio.split()[0] if len(fio.split()) > 0 else None,
+                    last_name=fio.split()[2] if len(fio.split()) > 2 else None,
+                    patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
+                    birth_date=dob_formatted,
+                    death_date=dod_formatted
+                )
 
                 if deceased:
                     loaded_deceased += 1
