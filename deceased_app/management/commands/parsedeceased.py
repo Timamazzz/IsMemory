@@ -28,6 +28,10 @@ def format_date(date_str):
     return f"{year}-{month}-{day}"
 
 
+# Остальные импорты...
+
+# Остальные импорты...
+
 class Command(BaseCommand):
     help = ''
 
@@ -42,79 +46,74 @@ class Command(BaseCommand):
             total_pages = 3117
             loaded_deceased = 0
             loaded_plots = 0
+            loaded_images = 0
+
             # for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
             url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
                    f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
                    f'о&page={102}')
             page = requests.get(url, headers=headers)
-            soup = BeautifulSoup(page.text, 'html.parser')
-
-            items = soup.find_all('a', class_='new-search-results-item')
+            soup_main = BeautifulSoup(page.text, 'html.parser')
+            deceased_objects = []
+            plot_objects = []
+            plot_images = []
+            items = soup_main.find_all('a', class_='new-search-results-item')
             for item_num, item in enumerate(items, start=1):
                 deceased_url = item['href']
                 deceased_response = requests.get(deceased_url, headers=headers)
-                soup = BeautifulSoup(deceased_response.text, 'html.parser')
-                deceased_right_div = soup.find('div', class_='deceased-right')
+                soup_deceased = BeautifulSoup(deceased_response.text, 'html.parser')
+                deceased_right_div = soup_deceased.find('div', class_='deceased-right')
 
                 if deceased_right_div:
                     fio = deceased_right_div.find('h1').text.strip()
-                    dob = soup.find('h6', text='Дата рождения').find_next('p').text.strip()
-                    dod = soup.find('h6', text='Дата смерти').find_next('p').text.strip()
+                    dob = soup_deceased.find('h6', text='Дата рождения').find_next('p').text.strip()
+                    dod = soup_deceased.find('h6', text='Дата смерти').find_next('p').text.strip()
 
                     dob_formatted = format_date(dob)
                     dod_formatted = format_date(dod)
 
-                    deceased, created = Deceased.objects.get_or_create(
+                    deceased = Deceased(
                         first_name=fio.split()[0] if len(fio.split()) > 0 else None,
                         last_name=fio.split()[2] if len(fio.split()) > 2 else None,
                         patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
                         birth_date=dob_formatted,
                         death_date=dod_formatted
                     )
+                    deceased_objects.append(deceased)
 
-                    if deceased:
-                        loaded_deceased += 1
-                        coordinates_str = soup.find('h6', text='Место захоронения').find_next('p').text.strip()
-                        self.stdout.write(self.style.SUCCESS(f'coordinates_str:{coordinates_str}'))
-                        if coordinates_str != '':
-                            coordinates = [float(coord.strip()) for coord in coordinates_str.split(',')]
-
-                            coordinates_array = [[
+                    coordinates_str = soup_deceased.find('h6', text='Место захоронения').find_next('p').text.strip()
+                    if coordinates_str:
+                        coordinates = [float(coord.strip()) for coord in coordinates_str.split(',')]
+                        coordinates_array = [
+                            [
                                 [coordinates[0] + 0.000009, coordinates[1] + 0.000009],
                                 [coordinates[0] + 0.000009, coordinates[1] - 0.000009],
                                 [coordinates[0] - 0.000009, coordinates[1] - 0.000009],
                                 [coordinates[0] - 0.000009, coordinates[1] + 0.000009],
                                 [coordinates[0] + 0.000009, coordinates[1] + 0.000009]
-                            ]]
-                        else:
-                            coordinates_array = None
-
-                        self.stdout.write(self.style.SUCCESS(f'coordinates_array:{coordinates_array}'))
-                        cemetery_plot, created = CemeteryPlot.objects.get_or_create(
+                            ]
+                        ]
+                        plot = CemeteryPlot(
                             cemetery=cemetery,
                             coordinates=coordinates_array,
                             type=CemeteryPlotTypeEnum.BURIAL.name,
                             status=CemeteryPlotStatusEnum.OCCUPIED.name
                         )
+                        plot_objects.append(plot)
 
-                        if cemetery_plot:
-                            loaded_plots += 1
-                            deceased.cemetery_plot = cemetery_plot
-                            deceased.save()
+                        image_items = soup_deceased.select('.deceased-gallery-item img')
+                        image_urls = [item['src'] for item in image_items]
 
-                            image_items = soup.select('.deceased-gallery-item img')
-                            image_urls = [item['src'] for item in image_items]
+                        for image_url in image_urls:
+                            parts = image_url.split(',')
+                            image_data = parts[1]
+                            decoded_data = base64.b64decode(image_data)
+                            image_format = imghdr.what(None, h=decoded_data)
+                            file_name = f'cemetery_plot_{plot.id}.{image_format}'
 
-                            for image_url in image_urls:
-                                parts = image_url.split(',')
-                                image_data = parts[1]
-                                decoded_data = base64.b64decode(image_data)
-                                image_format = imghdr.what(None, h=decoded_data)
-
+                            if not default_storage.exists(file_name):
                                 img = Image.open(io.BytesIO(decoded_data))
-
                                 max_size = (800, 600)
-
                                 img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
                                 output_buffer = io.BytesIO()
@@ -122,17 +121,32 @@ class Command(BaseCommand):
                                 output_buffer.seek(0)
                                 compressed_data = output_buffer.getvalue()
 
-                                file_name = f'after_parse_image_{datetime.now().strftime("%Y%m%d%H%M%S")}.{image_format}'
                                 file_path = default_storage.save(file_name, ContentFile(compressed_data))
 
-                                CemeteryPlotImage.objects.get_or_create(
-                                    cemetery_plot=cemetery_plot,
+                                plot_image = CemeteryPlotImage(
+                                    cemetery_plot=plot,
                                     file=file_path,
                                     original_name=file_name
                                 )
+                                plot_images.append(plot_image)
+
+                Deceased.objects.bulk_create(deceased_objects)
+                loaded_deceased += len(deceased_objects)
+
+                CemeteryPlot.objects.bulk_create(plot_objects)
+                loaded_plots += len(plot_objects)
+
+                for plot, deceased in zip(plot_objects, deceased_objects):
+                    deceased.cemetery_plot = plot
+                Deceased.objects.bulk_update(deceased_objects, ['cemetery_plot'])
+
+                CemeteryPlotImage.objects.bulk_create(plot_images)
+                loaded_images += len(plot_images)
 
             self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
             self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
+            self.stdout.write(self.style.SUCCESS(f'Total loaded images: {loaded_images}'))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
+
