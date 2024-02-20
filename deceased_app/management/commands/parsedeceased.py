@@ -54,12 +54,12 @@ class Command(BaseCommand):
 
                 try:
                     dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
-                except ValueError as e:
+                except ValidationError as e:
                     dob_formatted = None
 
                 try:
                     dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
-                except ValueError as e:
+                except ValidationError as e:
                     dod_formatted = None
 
                 self.stdout.write(self.style.SUCCESS(f'dob_formatted:{dob_formatted} dod:{dod_formatted}'))
