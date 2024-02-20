@@ -54,11 +54,13 @@ class Command(BaseCommand):
                         try:
                             dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
                         except ValueError as e:
+                            self.stdout.write(self.style.ERROR(f'Error parsing date (DOB): {e}'))
                             dob_formatted = None
 
                         try:
                             dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
                         except ValueError as e:
+                            self.stdout.write(self.style.ERROR(f'Error parsing date (DOD): {e}'))
                             dod_formatted = None
 
                         deceased, created = Deceased.objects.get_or_create(
