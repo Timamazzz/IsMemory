@@ -22,12 +22,12 @@ from IsMemory import settings
 from IsMemory.helpers.FileUploadView import FileUploadView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/users/', include('users_app.urls')),
-    path('api/deceased/', include('deceased_app.urls')),
-    path('api/locations/', include('locations_app.urls')),
-    path('api/services/', include('services_app.urls')),
-    path('api/orders/', include('orders_app.urls')),
+    # path('admin/', admin.site.urls),
+    # path('api/users/', include('users_app.urls')),
+    # path('api/deceased/', include('deceased_app.urls')),
+    # path('api/locations/', include('locations_app.urls')),
+    # path('api/services/', include('services_app.urls')),
+    # path('api/orders/', include('orders_app.urls')),
     re_path(r'^media/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
     path('upload/', FileUploadView.as_view(), name='file-upload'),
