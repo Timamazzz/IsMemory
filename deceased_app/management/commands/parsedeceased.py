@@ -25,7 +25,7 @@ def parse_date(date_string):
         day = int(match.group(1))
         month = int(match.group(2))
         year = int(match.group(3))
-        self.stdout.write(self.style.SUCCESS(f'year:{year} month:{month} day:{day}'))
+        print(f'year:{year} month:{month} day:{day}')
         return datetime(year, month, day).strftime("%Y-%m-%d")
 
     match = re.match(r'(\d{4})-(\d{1,2})-(\d{1,2})', date_string)
