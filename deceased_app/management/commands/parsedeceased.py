@@ -72,7 +72,7 @@ class Command(BaseCommand):
                         birth_date=dob_formatted,
                         death_date=dod_formatted
                     )
-                except ValueError as e:
+                except ValidationError as e:
                     deceased, created = Deceased.objects.get_or_create(
                         first_name=fio.split()[0] if len(fio.split()) > 0 else None,
                         last_name=fio.split()[2] if len(fio.split()) > 2 else None,
