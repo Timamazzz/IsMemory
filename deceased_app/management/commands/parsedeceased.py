@@ -49,7 +49,7 @@ class Command(BaseCommand):
             for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
                 url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
                        f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
-                       f'о&page={80}')
+                       f'о&page={81}')
                 page = requests.get(url, headers=headers)
                 soup = BeautifulSoup(page.text, 'html.parser')
 
