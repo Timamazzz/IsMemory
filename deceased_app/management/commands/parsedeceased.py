@@ -18,6 +18,19 @@ from PIL import Image
 import io
 
 
+def parse_date(date_string):
+    match = re.match(r'(\d{1,2})\.(\d{1,2})\.(\d{4})', date_string)
+    if match:
+        day = int(match.group(1))
+        month = int(match.group(2))
+        year = int(match.group(3))
+        return datetime(year, month, day).strftime("%Y-%m-%d")
+
+    match = re.match(r'(\d{4})-(\d{1,2})-(\d{1,2})', date_string)
+    if match:
+        return date_string
+
+
 class Command(BaseCommand):
     help = ''
 
@@ -35,7 +48,7 @@ class Command(BaseCommand):
             for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
                 url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
                        f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
-                       f'о&page={page_num}')
+                       f'о&page={80}')
                 page = requests.get(url, headers=headers)
                 soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -51,17 +64,8 @@ class Command(BaseCommand):
                         dob = soup.find('h6', text='Дата рождения').find_next('p').text.strip()
                         dod = soup.find('h6', text='Дата смерти').find_next('p').text.strip()
 
-                        try:
-                            dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
-                        except ValueError as e:
-                            self.stdout.write(self.style.ERROR(f'Error parsing date (DOB): {e}'))
-                            dob_formatted = None
-
-                        try:
-                            dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
-                        except ValueError as e:
-                            self.stdout.write(self.style.ERROR(f'Error parsing date (DOD): {e}'))
-                            dod_formatted = None
+                        dob_formatted = parse_date(dob)
+                        dod_formatted = parse_date(dod)
 
                         deceased, created = Deceased.objects.get_or_create(
                             first_name=fio.split()[0] if len(fio.split()) > 0 else None,
