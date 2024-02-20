@@ -54,23 +54,30 @@ class Command(BaseCommand):
 
                 try:
                     dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
-                except ValidationError as e:
+                except ValueError as e:
                     dob_formatted = None
 
                 try:
                     dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
-                except ValidationError as e:
+                except ValueError as e:
                     dod_formatted = None
 
                 self.stdout.write(self.style.SUCCESS(f'dob_formatted:{dob_formatted} dod:{dod_formatted}'))
 
-                deceased, created = Deceased.objects.get_or_create(
-                    first_name=fio.split()[0] if len(fio.split()) > 0 else None,
-                    last_name=fio.split()[2] if len(fio.split()) > 2 else None,
-                    patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
-                    birth_date=dob_formatted,
-                    death_date=dod_formatted
-                )
+                try:
+                    deceased, created = Deceased.objects.get_or_create(
+                        first_name=fio.split()[0] if len(fio.split()) > 0 else None,
+                        last_name=fio.split()[2] if len(fio.split()) > 2 else None,
+                        patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
+                        birth_date=dob_formatted,
+                        death_date=dod_formatted
+                    )
+                except ValueError as e:
+                    deceased, created = Deceased.objects.get_or_create(
+                        first_name=fio.split()[0] if len(fio.split()) > 0 else None,
+                        last_name=fio.split()[2] if len(fio.split()) > 2 else None,
+                        patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
+                    )
 
                 if deceased:
                     loaded_deceased += 1
@@ -126,6 +133,6 @@ class Command(BaseCommand):
                                 original_name=file_name
                             )
 
-        self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
-        self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
+    self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
+    self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
 
