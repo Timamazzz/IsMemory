@@ -140,7 +140,7 @@ class Command(BaseCommand):
 
             for plot, deceased in zip(created_plots, created_deceased):
                 deceased.cemetery_plot = plot
-            Deceased.objects.bulk_update(created_deceased, ['cemetery_plot'])
+                deceased.save()
 
             self.stdout.write(self.style.SUCCESS(f'plot_images: {plot_images}'))
             CemeteryPlotImage.objects.bulk_create(plot_images)
