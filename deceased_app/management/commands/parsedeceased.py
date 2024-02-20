@@ -16,41 +16,25 @@ from locations_app.models import Cemetery, CemeteryPlot
 from tqdm import tqdm
 from PIL import Image
 import io
-import re
-
-
-def parse_date(date_string):
-    match = re.match(r'(\d{1,2})\.(\d{1,2})\.(\d{4})', date_string)
-    if match:
-        day = int(match.group(1))
-        month = int(match.group(2))
-        year = int(match.group(3))
-        print(f'year:{year} month:{month} day:{day}')
-        return datetime(year, month, day).strftime("%Y-%m-%d")
-
-    match = re.match(r'(\d{4})-(\d{1,2})-(\d{1,2})', date_string)
-    if match:
-        return date_string
 
 
 class Command(BaseCommand):
     help = ''
 
     def handle(self, *args, **options):
-        try:
-            cemetery = Cemetery.objects.get(name='Ячнево')
+        cemetery = Cemetery.objects.get(name='Ячнево')
 
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                              'Chrome/91.0.4472.124 Safari/537.36'
-            }
-            total_pages = 3117
-            loaded_deceased = 0
-            loaded_plots = 0
-            # for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/91.0.4472.124 Safari/537.36'
+        }
+        total_pages = 3117
+        loaded_deceased = 0
+        loaded_plots = 0
+        for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
             url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
                    f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
-                   f'о&page={81}')
+                   f'о&page={page_num}')
             page = requests.get(url, headers=headers)
             soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -66,8 +50,15 @@ class Command(BaseCommand):
                     dob = soup.find('h6', text='Дата рождения').find_next('p').text.strip()
                     dod = soup.find('h6', text='Дата смерти').find_next('p').text.strip()
 
-                    dob_formatted = parse_date(dob)
-                    dod_formatted = parse_date(dod)
+                    try:
+                        dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
+                    except ValueError as e:
+                        dob_formatted = None
+
+                    try:
+                        dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
+                    except ValueError as e:
+                        dod_formatted = None
 
                     deceased, created = Deceased.objects.get_or_create(
                         first_name=fio.split()[0] if len(fio.split()) > 0 else None,
@@ -131,8 +122,6 @@ class Command(BaseCommand):
                                     original_name=file_name
                                 )
 
-            self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
-            self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
+        self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
+        self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
 
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
