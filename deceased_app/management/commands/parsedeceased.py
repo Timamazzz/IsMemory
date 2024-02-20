@@ -61,12 +61,8 @@ class Command(BaseCommand):
                         dob = soup.find('h6', text='Дата рождения').find_next('p').text.strip()
                         dod = soup.find('h6', text='Дата смерти').find_next('p').text.strip()
 
-                        self.stdout.write(self.style.SUCCESS(f'before dob:{dob} dod:{dod}'))
-
                         dob_formatted = format_date(dob)
                         dod_formatted = format_date(dod)
-
-                        self.stdout.write(self.style.SUCCESS(f'after dob:{dob} dod:{dod}'))
 
                         deceased, created = Deceased.objects.get_or_create(
                             first_name=fio.split()[0] if len(fio.split()) > 0 else None,
