@@ -130,21 +130,21 @@ class Command(BaseCommand):
                                 )
                                 plot_images.append(plot_image)
 
-                self.stdout.write(self.style.SUCCESS(f'deceased_objects: {deceased_objects}'))
-                Deceased.objects.bulk_create(deceased_objects)
-                loaded_deceased += len(deceased_objects)
+            self.stdout.write(self.style.SUCCESS(f'deceased_objects: {deceased_objects}'))
+            Deceased.objects.bulk_create(deceased_objects)
+            loaded_deceased += len(deceased_objects)
 
-                self.stdout.write(self.style.SUCCESS(f'plot_objects: {plot_objects}'))
-                CemeteryPlot.objects.bulk_create(plot_objects)
-                loaded_plots += len(plot_objects)
+            self.stdout.write(self.style.SUCCESS(f'plot_objects: {plot_objects}'))
+            CemeteryPlot.objects.bulk_create(plot_objects)
+            loaded_plots += len(plot_objects)
 
-                for plot, deceased in zip(plot_objects, deceased_objects):
-                    deceased.cemetery_plot = plot
-                Deceased.objects.bulk_update(deceased_objects, ['cemetery_plot'])
+            for plot, deceased in zip(plot_objects, deceased_objects):
+                deceased.cemetery_plot = plot
+            Deceased.objects.bulk_update(deceased_objects, ['cemetery_plot'])
 
-                self.stdout.write(self.style.SUCCESS(f'plot_images: {plot_images}'))
-                CemeteryPlotImage.objects.bulk_create(plot_images)
-                loaded_images += len(plot_images)
+            self.stdout.write(self.style.SUCCESS(f'plot_images: {plot_images}'))
+            CemeteryPlotImage.objects.bulk_create(plot_images)
+            loaded_images += len(plot_images)
 
             self.stdout.write(self.style.SUCCESS(f'Total loaded deceased: {loaded_deceased}'))
             self.stdout.write(self.style.SUCCESS(f'Total loaded plots: {loaded_plots}'))
