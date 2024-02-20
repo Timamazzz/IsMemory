@@ -53,9 +53,12 @@ class Command(BaseCommand):
 
                         try:
                             dob_formatted = datetime.strptime(dob, "%d.%m.%Y").strftime("%Y-%m-%d") if dob else None
-                            dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
                         except ValueError as e:
                             dob_formatted = None
+
+                        try:
+                            dod_formatted = datetime.strptime(dod, "%d.%m.%Y").strftime("%Y-%m-%d") if dod else None
+                        except ValueError as e:
                             dod_formatted = None
 
                         deceased, created = Deceased.objects.get_or_create(
