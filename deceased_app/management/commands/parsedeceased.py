@@ -1,13 +1,12 @@
 import base64
 import imghdr
-from datetime import datetime
+import io
 
+import requests
+from bs4 import BeautifulSoup
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand
-import requests
-from bs4 import BeautifulSoup
-import time
 
 from deceased_app.models import Deceased
 from docs_app.models import CemeteryPlotImage
@@ -15,7 +14,6 @@ from locations_app.enums import CemeteryPlotTypeEnum, CemeteryPlotStatusEnum
 from locations_app.models import Cemetery, CemeteryPlot
 from tqdm import tqdm
 from PIL import Image
-import io
 
 
 def format_date(date_str):
@@ -27,10 +25,6 @@ def format_date(date_str):
     day = parts[0].zfill(2)
     return f"{year}-{month}-{day}"
 
-
-# Остальные импорты...
-
-# Остальные импорты...
 
 class Command(BaseCommand):
     help = ''
@@ -44,62 +38,65 @@ class Command(BaseCommand):
                               'Chrome/91.0.4472.124 Safari/537.36'
             }
             total_pages = 3117
+            start_page = 102
             loaded_deceased = 0
             loaded_plots = 0
             loaded_images = 0
 
-            # for page_num in tqdm(range(1, total_pages + 1), desc='Pages processed'):
-            url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
-                   f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнев'
-                   f'о&page={102}')
-            page = requests.get(url, headers=headers)
-            soup_main = BeautifulSoup(page.text, 'html.parser')
-            deceased_objects = []
-            plot_objects = []
-            plot_images = []
-            items = soup_main.find_all('a', class_='new-search-results-item')
-            for item_num, item in enumerate(items, start=1):
-                deceased_url = item['href']
-                deceased_response = requests.get(deceased_url, headers=headers)
-                soup_deceased = BeautifulSoup(deceased_response.text, 'html.parser')
-                deceased_right_div = soup_deceased.find('div', class_='deceased-right')
+            for page_num in tqdm(range(start_page, total_pages + 1), desc='Pages processed'):
+                url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
+                       f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={page_num}')
+                page = requests.get(url, headers=headers)
+                soup_main = BeautifulSoup(page.text, 'html.parser')
 
-                if deceased_right_div:
-                    fio = deceased_right_div.find('h1').text.strip()
-                    dob = soup_deceased.find('h6', text='Дата рождения').find_next('p').text.strip()
-                    dod = soup_deceased.find('h6', text='Дата смерти').find_next('p').text.strip()
+                items = soup_main.find_all('a', class_='new-search-results-item')
+                for item_num, item in enumerate(items, start=1):
+                    deceased_url = item['href']
+                    deceased_response = requests.get(deceased_url, headers=headers)
+                    soup_deceased = BeautifulSoup(deceased_response.text, 'html.parser')
+                    deceased_right_div = soup_deceased.find('div', class_='deceased-right')
 
-                    dob_formatted = format_date(dob)
-                    dod_formatted = format_date(dod)
+                    if deceased_right_div:
+                        fio = deceased_right_div.find('h1').text.strip()
+                        dob = soup_deceased.find('h6', text='Дата рождения').find_next('p').text.strip()
+                        dod = soup_deceased.find('h6', text='Дата смерти').find_next('p').text.strip()
 
-                    deceased = Deceased(
-                        first_name=fio.split()[0] if len(fio.split()) > 0 else None,
-                        last_name=fio.split()[2] if len(fio.split()) > 2 else None,
-                        patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
-                        birth_date=dob_formatted,
-                        death_date=dod_formatted
-                    )
-                    deceased_objects.append(deceased)
+                        dob_formatted = format_date(dob)
+                        dod_formatted = format_date(dod)
 
-                    coordinates_str = soup_deceased.find('h6', text='Место захоронения').find_next('p').text.strip()
-                    if coordinates_str:
-                        coordinates = [float(coord.strip()) for coord in coordinates_str.split(',')]
-                        coordinates_array = [
-                            [
-                                [coordinates[0] + 0.000009, coordinates[1] + 0.000009],
-                                [coordinates[0] + 0.000009, coordinates[1] - 0.000009],
-                                [coordinates[0] - 0.000009, coordinates[1] - 0.000009],
-                                [coordinates[0] - 0.000009, coordinates[1] + 0.000009],
-                                [coordinates[0] + 0.000009, coordinates[1] + 0.000009]
+                        deceased, deceased_created = Deceased.objects.get_or_create(
+                            first_name=fio.split()[0] if len(fio.split()) > 0 else None,
+                            last_name=fio.split()[2] if len(fio.split()) > 2 else None,
+                            patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
+                            birth_date=dob_formatted,
+                            death_date=dod_formatted
+                        )
+                        if deceased_created:
+                            loaded_deceased += 1
+
+                        cemetery_plot_coordinates = None
+                        coordinates_str = soup_deceased.find('h6', text='Место захоронения').find_next('p').text.strip()
+                        if coordinates_str != '':
+                            coordinates = [float(coord.strip()) for coord in coordinates_str.split(',')]
+                            cemetery_plot_coordinates = [
+                                [
+                                    [coordinates[0] + 0.000009, coordinates[1] + 0.000009],
+                                    [coordinates[0] + 0.000009, coordinates[1] - 0.000009],
+                                    [coordinates[0] - 0.000009, coordinates[1] - 0.000009],
+                                    [coordinates[0] - 0.000009, coordinates[1] + 0.000009],
+                                    [coordinates[0] + 0.000009, coordinates[1] + 0.000009]
+                                ]
                             ]
-                        ]
-                        plot = CemeteryPlot(
+
+                        plot, plot_created = CemeteryPlot.objects.get_or_create(
                             cemetery=cemetery,
-                            coordinates=coordinates_array,
+                            coordinates=cemetery_plot_coordinates,
                             type=CemeteryPlotTypeEnum.BURIAL.name,
                             status=CemeteryPlotStatusEnum.OCCUPIED.name
                         )
-                        plot_objects.append(plot)
+
+                        if plot_created:
+                            loaded_plots += 1
 
                         image_items = soup_deceased.select('.deceased-gallery-item img')
                         image_urls = [item['src'] for item in image_items]
@@ -122,31 +119,24 @@ class Command(BaseCommand):
                                 compressed_data = output_buffer.getvalue()
 
                                 file_path = default_storage.save(file_name, ContentFile(compressed_data))
+                            else:
+                                file_path = default_storage.path(file_name)
 
-                                plot_image = CemeteryPlotImage(
-                                    cemetery_plot=plot,
-                                    file=file_path,
-                                    original_name=file_name
-                                )
-                                plot_images.append(plot_image)
+                            plot_image, plot_image_created = CemeteryPlotImage.objects.get_or_create(
+                                cemetery_plot=plot,
+                                file=file_path,
+                                original_name=file_name
+                            )
 
-            self.stdout.write(self.style.SUCCESS(f'deceased_objects: {deceased_objects}'))
-            created_deceased = Deceased.objects.bulk_create(deceased_objects)
-            loaded_deceased += len(created_deceased)
+                            if plot_image_created:
+                                loaded_images += 1
 
-            self.stdout.write(self.style.SUCCESS(f'plot_objects: {plot_objects}'))
-            created_plots = CemeteryPlot.objects.bulk_create(plot_objects)
-            loaded_plots += len(created_plots)
-
-            for plot, deceased in zip(created_plots, created_deceased):
-                deceased.cemetery_plot = plot
-
-            Deceased.objects.bulk_update(created_deceased, ['cemetery_plot'])
-
-            self.stdout.write(self.style.SUCCESS(f'plot_images: {plot_images}'))
-            CemeteryPlotImage.objects.bulk_create(plot_images)
-            loaded_images += len(plot_images)
+            self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
+            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_plots}'))
+            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_images}'))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
-
+            self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
+            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_plots}'))
+            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_images}'))
