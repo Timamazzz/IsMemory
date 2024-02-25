@@ -111,7 +111,7 @@ class Command(BaseCommand):
                             image_data = parts[1]
                             decoded_data = base64.b64decode(image_data)
                             image_format = imghdr.what(None, h=decoded_data)
-                            file_name = f'cemetery_plot_{plot.id}_{uuid.uuid4()}.{image_format}'  # Добавляем случайный идентификатор к имени файла
+                            file_name = f'cemetery_plot_{plot.id}_{uuid.uuid4()}.{image_format}'
 
                             img = Image.open(io.BytesIO(decoded_data))
                             max_size = (800, 600)
