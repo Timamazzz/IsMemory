@@ -76,8 +76,9 @@ class Command(BaseCommand):
 
                         cemetery_plot_coordinates = None
                         coordinates_str = soup_deceased.find('h6', text='Место захоронения').find_next('p').text.strip()
-
+                        print('coordinates_str', coordinates_str)
                         if coordinates_str:
+                            print('coordinates_str', True)
                             coordinates = [float(coord.strip()) for coord in coordinates_str.split(',') if
                                            coord.strip()]
 
