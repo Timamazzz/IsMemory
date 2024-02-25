@@ -1,6 +1,7 @@
 import base64
 import imghdr
 import io
+import uuid
 
 import requests
 from bs4 import BeautifulSoup
@@ -110,21 +111,18 @@ class Command(BaseCommand):
                             image_data = parts[1]
                             decoded_data = base64.b64decode(image_data)
                             image_format = imghdr.what(None, h=decoded_data)
-                            file_name = f'cemetery_plot_{plot.id}.{image_format}'
+                            file_name = f'cemetery_plot_{plot.id}_{uuid.uuid4()}.{image_format}'  # Добавляем случайный идентификатор к имени файла
 
-                            if not default_storage.exists(file_name):
-                                img = Image.open(io.BytesIO(decoded_data))
-                                max_size = (800, 600)
-                                img.thumbnail(max_size, Image.Resampling.LANCZOS)
+                            img = Image.open(io.BytesIO(decoded_data))
+                            max_size = (800, 600)
+                            img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
-                                output_buffer = io.BytesIO()
-                                img.save(output_buffer, optimize=True, quality=95, format=image_format)
-                                output_buffer.seek(0)
-                                compressed_data = output_buffer.getvalue()
+                            output_buffer = io.BytesIO()
+                            img.save(output_buffer, optimize=True, quality=95, format=image_format)
+                            output_buffer.seek(0)
+                            compressed_data = output_buffer.getvalue()
 
-                                file_path = default_storage.save(file_name, ContentFile(compressed_data))
-                            else:
-                                file_path = default_storage.path(file_name)
+                            file_path = default_storage.save(file_name, ContentFile(compressed_data))
 
                             plot_image, plot_image_created = CemeteryPlotImage.objects.get_or_create(
                                 cemetery_plot=plot,
