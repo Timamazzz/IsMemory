@@ -76,17 +76,22 @@ class Command(BaseCommand):
 
                         cemetery_plot_coordinates = None
                         coordinates_str = soup_deceased.find('h6', text='Место захоронения').find_next('p').text.strip()
-                        if coordinates_str != '':
-                            coordinates = [float(coord.strip()) for coord in coordinates_str.split(',')]
-                            cemetery_plot_coordinates = [
-                                [
-                                    [coordinates[0] + 0.000009, coordinates[1] + 0.000009],
-                                    [coordinates[0] + 0.000009, coordinates[1] - 0.000009],
-                                    [coordinates[0] - 0.000009, coordinates[1] - 0.000009],
-                                    [coordinates[0] - 0.000009, coordinates[1] + 0.000009],
-                                    [coordinates[0] + 0.000009, coordinates[1] + 0.000009]
+
+                        if coordinates_str:
+                            coordinates = [float(coord.strip()) for coord in coordinates_str.split(',') if
+                                           coord.strip()]
+
+                            if len(coordinates) >= 2:
+                                lat, lon = coordinates[:2]
+                                cemetery_plot_coordinates = [
+                                    [
+                                        [lat + 0.000009, lon + 0.000009],
+                                        [lat + 0.000009, lon - 0.000009],
+                                        [lat - 0.000009, lon - 0.000009],
+                                        [lat - 0.000009, lon + 0.000009],
+                                        [lat + 0.000009, lon + 0.000009]
+                                    ]
                                 ]
-                            ]
 
                         plot, plot_created = CemeteryPlot.objects.get_or_create(
                             cemetery=cemetery,
@@ -133,10 +138,10 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
             self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_plots}'))
-            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_images}'))
+            self.stdout.write(self.style.SUCCESS(f'images loaded: {loaded_images}'))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
             self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
             self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_plots}'))
-            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_images}'))
+            self.stdout.write(self.style.SUCCESS(f'images loaded: {loaded_images}'))
