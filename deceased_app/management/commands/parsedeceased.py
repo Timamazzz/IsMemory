@@ -38,7 +38,7 @@ class Command(BaseCommand):
                               'Chrome/91.0.4472.124 Safari/537.36'
             }
             total_pages = 3117
-            start_page = 102
+            start_page = 1
             loaded_deceased = 0
             loaded_plots = 0
             loaded_images = 0
