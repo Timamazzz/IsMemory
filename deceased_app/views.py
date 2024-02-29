@@ -45,12 +45,15 @@ class SearchDeceasedAPIView(APIView):
         if pk:
             deceased = get_object_or_404(queryset, pk=pk)
             serializer = DeceasedSerializer(deceased)
-        else:
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = DeceasedListSerializer(page, many=True, context={'request': self.request})
-                return self.get_paginated_response(serializer.data)
-            serializer = DeceasedListSerializer(queryset, many=True, context={'request': self.request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = DeceasedListSerializer(page, many=True, context={'request': self.request})
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = DeceasedListSerializer(queryset, many=True, context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
