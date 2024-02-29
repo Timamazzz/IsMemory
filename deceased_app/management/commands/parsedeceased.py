@@ -62,6 +62,7 @@ class Command(BaseCommand):
 
                     if deceased_right_div:
                         fio = deceased_right_div.find('h1').text.strip()
+                        fio = deceased_right_div.find('h1').text.strip()
                         dob = soup_deceased.find('h6', text='Дата рождения').find_next('p').text.strip()
                         dod = soup_deceased.find('h6', text='Дата смерти').find_next('p').text.strip()
 
@@ -90,7 +91,7 @@ class Command(BaseCommand):
                         image_items = soup_deceased.select('.deceased-gallery-item img')
                         image_urls = [item['src'] for item in image_items]
 
-                        plot = CemeteryPlot.objects.get_or_create(
+                        plot, _ = CemeteryPlot.objects.get_or_create(
                             cemetery=cemetery,
                             coordinates=cemetery_plot_coordinates,
                             type=CemeteryPlotTypeEnum.BURIAL.name,
