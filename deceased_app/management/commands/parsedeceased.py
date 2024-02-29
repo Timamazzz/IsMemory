@@ -51,6 +51,10 @@ class Command(BaseCommand):
                 soup_main = BeautifulSoup(page.text, 'html.parser')
 
                 items = soup_main.find_all('a', class_='new-search-results-item')
+                deceased_bulk_list = []
+                plot_bulk_list = []
+                image_bulk_list = []
+
                 for item_num, item in enumerate(items, start=1):
                     deceased_url = item['href']
                     deceased_response = requests.get(deceased_url, headers=headers)
@@ -64,16 +68,6 @@ class Command(BaseCommand):
 
                         dob_formatted = format_date(dob)
                         dod_formatted = format_date(dod)
-
-                        deceased, deceased_created = Deceased.objects.get_or_create(
-                            first_name=fio.split()[0] if len(fio.split()) > 0 else None,
-                            last_name=fio.split()[2] if len(fio.split()) > 2 else None,
-                            patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
-                            birth_date=dob_formatted,
-                            death_date=dod_formatted
-                        )
-                        if deceased_created:
-                            loaded_deceased += 1
 
                         cemetery_plot_coordinates = None
                         coordinates_str = soup_deceased.find('h6', text='Место захоронения').find_next('p').text.strip()
@@ -93,25 +87,24 @@ class Command(BaseCommand):
                                     ]
                                 ]
 
-                        plot, plot_created = CemeteryPlot.objects.get_or_create(
+                        image_items = soup_deceased.select('.deceased-gallery-item img')
+                        image_urls = [item['src'] for item in image_items]
+
+                        plot = CemeteryPlot(
                             cemetery=cemetery,
                             coordinates=cemetery_plot_coordinates,
                             type=CemeteryPlotTypeEnum.BURIAL.name,
                             status=CemeteryPlotStatusEnum.OCCUPIED.name
                         )
 
-                        if plot_created:
-                            loaded_plots += 1
-
-                        image_items = soup_deceased.select('.deceased-gallery-item img')
-                        image_urls = [item['src'] for item in image_items]
+                        plot_bulk_list.append(plot)
 
                         for image_url in image_urls:
                             parts = image_url.split(',')
                             image_data = parts[1]
                             decoded_data = base64.b64decode(image_data)
                             image_format = imghdr.what(None, h=decoded_data)
-                            file_name = f'cemetery_plot_{plot.id}_{uuid.uuid4()}.{image_format}'
+                            file_name = f'cemetery_plot_{uuid.uuid4()}.{image_format}'
 
                             img = Image.open(io.BytesIO(decoded_data))
                             max_size = (800, 600)
@@ -124,14 +117,32 @@ class Command(BaseCommand):
 
                             file_path = default_storage.save(file_name, ContentFile(compressed_data))
 
-                            plot_image, plot_image_created = CemeteryPlotImage.objects.get_or_create(
-                                cemetery_plot=plot,
+                            plot_image = CemeteryPlotImage(
                                 file=file_path,
-                                original_name=file_name
+                                original_name=file_name,
+                                cemetery_plot=plot
                             )
 
-                            if plot_image_created:
-                                loaded_images += 1
+                            image_bulk_list.append(plot_image)
+
+                        deceased = Deceased(
+                            first_name=fio.split()[0] if len(fio.split()) > 0 else None,
+                            last_name=fio.split()[2] if len(fio.split()) > 2 else None,
+                            patronymic=fio.split()[1] if len(fio.split()) > 1 else None,
+                            birth_date=dob_formatted,
+                            death_date=dod_formatted,
+                            cemetery_plot=plot
+                        )
+
+                        deceased_bulk_list.append(deceased)
+
+                CemeteryPlot.objects.bulk_create(plot_bulk_list)
+                Deceased.objects.bulk_create(deceased_bulk_list)
+                CemeteryPlotImage.objects.bulk_create(image_bulk_list)
+
+                loaded_deceased += len(deceased_bulk_list)
+                loaded_plots += len(plot_bulk_list)
+                loaded_images += len(image_bulk_list)
 
             self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
             self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_plots}'))
@@ -139,6 +150,3 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
-            self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
-            self.stdout.write(self.style.SUCCESS(f'plot loaded: {loaded_plots}'))
-            self.stdout.write(self.style.SUCCESS(f'images loaded: {loaded_images}'))
