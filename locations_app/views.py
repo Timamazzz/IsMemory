@@ -34,7 +34,7 @@ class CemeteryViewSet(CustomModelViewSet):
         'filter': CemeteryFilterSerializer,
     }
 
-    permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         queryset = Cemetery.objects.annotate(
@@ -80,7 +80,7 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'filter': CemeteryPlotFilterSerializers
     }
 
-    permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
+    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset()).order_by('-id')

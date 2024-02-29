@@ -22,7 +22,7 @@ class DeceasedViewSet(CustomModelViewSet):
         'retrieve': DeceasedSerializer,
         'create': DeceasedCreateSerializer,
     }
-    permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class SearchDeceasedAPIView(APIView):

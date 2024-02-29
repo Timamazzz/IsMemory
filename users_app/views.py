@@ -76,11 +76,7 @@ class AdminViewSet(CustomModelViewSet):
         'retrieve': AdminUserRetrieveSerializer,
         'reset-password': AdminUserResetPasswordSerializer,
     }
-    permission_classes = [permissions.IsAuthenticated, HasDashboardAdminGroupPermission]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(groups__name='dashboard-admin')
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserViewSet(CustomModelViewSet):
@@ -92,7 +88,3 @@ class UserViewSet(CustomModelViewSet):
         'reset-password': UserResetPasswordSerializer,
         'update': UserPartialUpdateSerializer,
     }
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.exclude(groups__name='dashboard-admin')
