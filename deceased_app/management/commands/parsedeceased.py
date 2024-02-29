@@ -98,6 +98,8 @@ class Command(BaseCommand):
                             status=CemeteryPlotStatusEnum.OCCUPIED.name
                         )
 
+                        is_first_image = True
+
                         for image_url in image_urls:
                             parts = image_url.split(',')
                             image_data = parts[1]
@@ -121,6 +123,10 @@ class Command(BaseCommand):
                                 original_name=file_name,
                                 cemetery_plot=plot
                             )
+
+                            if is_first_image:
+                                plot_image.is_preview = True
+                                is_first_image = False
 
                             image_bulk_list.append(plot_image)
 
