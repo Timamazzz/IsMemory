@@ -52,7 +52,6 @@ class Command(BaseCommand):
 
                 items = soup_main.find_all('a', class_='new-search-results-item')
                 deceased_bulk_list = []
-                plot_bulk_list = []
                 image_bulk_list = []
 
                 for item_num, item in enumerate(items, start=1):
@@ -86,18 +85,17 @@ class Command(BaseCommand):
                                         [lat + 0.000009, lon + 0.000009]
                                     ]
                                 ]
+                        loaded_plots += 1
 
                         image_items = soup_deceased.select('.deceased-gallery-item img')
                         image_urls = [item['src'] for item in image_items]
 
-                        plot = CemeteryPlot(
+                        plot = CemeteryPlot.objects.get_or_create(
                             cemetery=cemetery,
                             coordinates=cemetery_plot_coordinates,
                             type=CemeteryPlotTypeEnum.BURIAL.name,
                             status=CemeteryPlotStatusEnum.OCCUPIED.name
                         )
-
-                        plot_bulk_list.append(plot)
 
                         for image_url in image_urls:
                             parts = image_url.split(',')
@@ -136,12 +134,10 @@ class Command(BaseCommand):
 
                         deceased_bulk_list.append(deceased)
 
-                CemeteryPlot.objects.bulk_create(plot_bulk_list)
                 Deceased.objects.bulk_create(deceased_bulk_list)
                 CemeteryPlotImage.objects.bulk_create(image_bulk_list)
 
                 loaded_deceased += len(deceased_bulk_list)
-                loaded_plots += len(plot_bulk_list)
                 loaded_images += len(image_bulk_list)
 
             self.stdout.write(self.style.SUCCESS(f'deceased loaded: {loaded_deceased}'))
