@@ -98,9 +98,7 @@ class Command(BaseCommand):
                             status=CemeteryPlotStatusEnum.OCCUPIED.name
                         )
 
-                        is_first_image = True
-
-                        for image_url in image_urls:
+                        for i, image_url in enumerate(image_urls):
                             parts = image_url.split(',')
                             image_data = parts[1]
                             decoded_data = base64.b64decode(image_data)
@@ -118,15 +116,20 @@ class Command(BaseCommand):
 
                             file_path = default_storage.save(file_name, ContentFile(compressed_data))
 
-                            plot_image = CemeteryPlotImage(
-                                file=file_path,
-                                original_name=file_name,
-                                cemetery_plot=plot
-                            )
-
-                            if is_first_image:
-                                plot_image.is_preview = True
-                                is_first_image = False
+                            if i == 0:
+                                plot_image = CemeteryPlotImage(
+                                    file=file_path,
+                                    original_name=file_name,
+                                    cemetery_plot=plot,
+                                    is_preview=True
+                                )
+                            else:
+                                plot_image = CemeteryPlotImage(
+                                    file=file_path,
+                                    original_name=file_name,
+                                    cemetery_plot=plot,
+                                    is_preview=False
+                                )
 
                             image_bulk_list.append(plot_image)
 
