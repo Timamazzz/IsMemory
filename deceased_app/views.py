@@ -11,6 +11,7 @@ from deceased_app.models import Deceased
 from deceased_app.serializers.deceased_serializers import DeceasedSerializer, DeceasedCreateSerializer, \
     DeceasedFavouriteListSerializer, DeceasedFavouriteSerializer, DeceasedListSerializer
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 
 # Create your views here.
@@ -32,6 +33,7 @@ class SearchDeceasedAPIView(APIView):
     }
     filterset_class = DeceasedFilter
     metadata_class = CustomOptionsMetadata
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         filterset = self.filterset_class(self.request.query_params, queryset=self.queryset)
@@ -44,6 +46,10 @@ class SearchDeceasedAPIView(APIView):
             deceased = get_object_or_404(queryset, pk=pk)
             serializer = DeceasedSerializer(deceased)
         else:
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = DeceasedListSerializer(page, many=True, context={'request': self.request})
+                return self.get_paginated_response(serializer.data)
             serializer = DeceasedListSerializer(queryset, many=True, context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
