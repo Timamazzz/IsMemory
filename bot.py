@@ -60,7 +60,8 @@ async def shared_contact(message: types.Message):
         elif response.status_code == 404:
             await message.answer("Исполнителя с таким номером телефона нет в системе")
         else:
-            await message.answer("Произошла ошибка при отправке данных. Попробуйте позже.")
+            await message.answer(f"Произошла ошибка при отправке данных. Попробуйте позже."
+                                 f"response {response}")
     except Exception as e:
         await message.answer("Произошла ошибка. Попробуйте позже.")
 
