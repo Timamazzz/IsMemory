@@ -61,7 +61,7 @@ async def shared_contact(message: types.Message):
             await message.answer("Исполнителя с таким номером телефона нет в системе")
         else:
             await message.answer(f"Произошла ошибка при отправке данных. Попробуйте позже."
-                                 f"response {response}")
+                                 f"response {response.__dict__}")
     except Exception as e:
         await message.answer("Произошла ошибка. Попробуйте позже.")
 
