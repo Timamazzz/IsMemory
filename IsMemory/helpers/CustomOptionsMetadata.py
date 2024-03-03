@@ -3,6 +3,8 @@ from collections import OrderedDict
 from django.utils.encoding import force_str
 from rest_framework import serializers
 
+MAX_CHOICES_COUNT = 1000
+
 
 class CustomOptionsMetadata(SimpleMetadata):
     def determine_metadata(self, request, view):
@@ -55,15 +57,15 @@ class CustomOptionsMetadata(SimpleMetadata):
 
         if (not field_info.get('read_only')) and \
                 (isinstance(field, (
-                serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
-                hasattr(field, 'choices')):
-
-            field_info['choices'] = [
-                {
-                    'value': choice_value,
-                    'display_name': force_str(choice_name, strings_only=True)
-                }
-                for choice_value, choice_name in field.choices.items()
-            ]
+                        serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
+                 hasattr(field, 'choices')):
+            if len(field.choices.items()) <= MAX_CHOICES_COUNT:
+                field_info['choices'] = [
+                    {
+                        'value': choice_value,
+                        'display_name': force_str(choice_name, strings_only=True)
+                    }
+                    for choice_value, choice_name in field.choices.items()
+                ]
 
         return field_info
