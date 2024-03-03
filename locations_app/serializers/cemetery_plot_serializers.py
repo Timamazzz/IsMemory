@@ -28,7 +28,7 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
 class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
     class Meta:
         model = CemeteryPlot
-        fields = '__all__'
+        exclude = ('deceased', )
 
 
 class CemeteryPlotImageSerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
 
     class Meta:
         model = CemeteryPlot
-        fields = '__all__'
+        exclude = ('deceased', )
 
 
 class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
@@ -56,7 +56,7 @@ class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = CemeteryPlot
-        fields = '__all__'
+        exclude = ('deceased', )
 
 
 class CemeteryPlotMapSerializer(serializers.ModelSerializer):
