@@ -172,6 +172,7 @@ async def process_finish_order(message: types.Message, state: FSMContext):
                                   json={'images': images,
                                         'status': OrderStatusEnum.COMPLETED.name},
                                   headers=HEADERS)
+        print('response', response.__dict__)
         if response.status_code == 200:
             await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
             main_keyboard = get_main_keyboard()
