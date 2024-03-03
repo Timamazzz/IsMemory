@@ -24,6 +24,7 @@ class DeceasedViewSet(CustomModelViewSet):
     }
     pagination_class = PageNumberPagination
     permission_classes = [permissions.AllowAny]
+    search_fields = ['first_name', 'last_name', 'patronymic']
 
 
 class SearchDeceasedAPIView(APIView):
