@@ -59,7 +59,33 @@ class CustomOptionsMetadata(SimpleMetadata):
                 (isinstance(field, (
                         serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
                  hasattr(field, 'choices')):
+
             if len(field.choices) <= MAX_CHOICES_COUNT:
+                # Преобразуем словарь choices в список кортежей
+                choices_list = list(field.choices.items())
+
+                # Пагинируем список кортежей
+                page_number = getattr(field, 'page_number', 1)
+                page_size = getattr(field, 'page_size', 10)
+                start_index = (page_number - 1) * page_size
+                end_index = start_index + page_size
+                paginated_choices = choices_list[start_index:end_index]
+
+                field_info['choices'] = [
+                    {
+                        'value': choice_value,
+                        'display_name': force_str(choice_name, strings_only=True)
+                    }
+                    for choice_value, choice_name in paginated_choices
+                ]
+
+                # Добавляем информацию о пагинации
+                field_info['paginate'] = True
+                field_info['page_number'] = page_number
+                field_info['page_size'] = page_size
+                field_info['total_choices'] = len(choices_list)
+
+            else:
                 field_info['choices'] = [
                     {
                         'value': choice_value,
