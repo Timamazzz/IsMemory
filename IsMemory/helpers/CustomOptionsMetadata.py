@@ -3,8 +3,6 @@ from collections import OrderedDict
 from django.utils.encoding import force_str
 from rest_framework import serializers
 
-from deceased_app.models import Deceased
-
 MAX_CHOICES_COUNT = 1000
 
 
@@ -38,8 +36,6 @@ class CustomOptionsMetadata(SimpleMetadata):
 
     def get_field_info(self, field):
         field_info = OrderedDict()
-        print('field', field.__dict__)
-        print('field type', type(field))
         field_info['type'] = self.label_lookup[field]
         field_info['required'] = getattr(field, 'required', False)
 
@@ -64,7 +60,7 @@ class CustomOptionsMetadata(SimpleMetadata):
                         serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
                  hasattr(field, 'choices')):
 
-            if not (getattr(field, 'queryset', None) and getattr(field.queryset, 'model', None) == Deceased):
+            if len(field.choices) <= MAX_CHOICES_COUNT:
                 field_info['choices'] = [
                     {
                         'value': choice_value,
