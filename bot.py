@@ -14,6 +14,9 @@ from orders_app.enums import OrderStatusEnum
 
 BOT_TOKEN = '6845960244:AAEqZSwtsNb3zaj2uDtZ6HplPPzYPaFB28U'
 API_URL = "https://belmemorial.ru/api"
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 YaBrowser/24.1.0.0 Safari/537.36'
+}
 
 # API_URL = 'http://51.250.126.124:3031/api'
 
@@ -50,7 +53,10 @@ async def shared_contact(message: types.Message):
 
         api_url = f'{API_URL}/orders/executors/set_data/'
         data = {'phone_number': phone_number, 'chat_id': chat_id}
-        response = requests.put(api_url, json=data)
+
+        response = requests.put(api_url, json=data, headers=HEADERS)
+        print('response', response.__dict__)
+
         if response.status_code == 200:
             main_keyboard = get_main_keyboard()
             await message.answer(
@@ -60,14 +66,13 @@ async def shared_contact(message: types.Message):
         elif response.status_code == 404:
             await message.answer("Исполнителя с таким номером телефона нет в системе")
         else:
-            await message.answer(f"Произошла ошибка при отправке данных. Попробуйте позже."
-                                 f"response {response.__dict__}")
+            await message.answer("Произошла ошибка при отправке данных. Попробуйте позже.")
     except Exception as e:
         await message.answer("Произошла ошибка. Попробуйте позже.")
 
 
 async def get_user_orders(chat_id):
-    response = requests.get(f'{API_URL}/orders/get_orders_by_chat_id/', params={'chat_id': chat_id})
+    response = requests.get(f'{API_URL}/orders/get_orders_by_chat_id/', params={'chat_id': chat_id}, headers=HEADERS)
     orders = response.json() if response.status_code == 200 else None
     return orders
 
@@ -108,7 +113,7 @@ async def order_actions(message: types.Message):
 
 
 async def get_order_details(order_id):
-    response = requests.get(f'{API_URL}/orders/{order_id}')
+    response = requests.get(f'{API_URL}/orders/{order_id}', headers=HEADERS)
     order_details = response.json() if response.status_code == 200 else None
     return order_details
 
@@ -165,7 +170,8 @@ async def process_finish_order(message: types.Message, state: FSMContext):
     if images:
         response = requests.patch(f'{API_URL}/orders/{order_id}/',
                                   json={'images': images,
-                                        'status': OrderStatusEnum.COMPLETED.name})
+                                        'status': OrderStatusEnum.COMPLETED.name},
+                                  headers=HEADERS)
         if response.status_code == 200:
             await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
             main_keyboard = get_main_keyboard()
@@ -193,7 +199,7 @@ async def handle_completed_order(message: types.Message, state: FSMContext):
         file_extension = os.path.splitext(file_path)[1]
 
         file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
-        response = requests.get(file_url)
+        response = requests.get(file_url, headers=HEADERS)
         file_name = f"{message.photo[0].file_id}{file_extension}"
 
         if response.status_code == 200:
