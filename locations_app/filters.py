@@ -75,4 +75,4 @@ class CemeteryPlotFilterSerializers(serializers.Serializer):
     place = serializers.CharField(required=False, label="Место")
 
     class Meta:
-        fields = ["cemetery", "municipality", "type", "status", 'plot_number', 'sector', 'row', 'burial', 'place',]
+        fields = ["cemetery", "municipality", "type", "status", 'plot_number', 'sector', 'row', 'burial', 'place', ]
