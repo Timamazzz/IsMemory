@@ -1,3 +1,5 @@
+import ast
+
 from django.db.models import Q
 from rest_framework import serializers
 
@@ -114,6 +116,7 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
                 cemetery_plots = cemetery_plots.filter(status_filters, type_filters)
 
                 if visible_area_coords:
+                    visible_area_coords = ast.literal_eval(visible_area_coords)
                     visible_area_polygon = Polygon(visible_area_coords)
                     plots_in_visible_area = []
                     for plot in cemetery_plots:
