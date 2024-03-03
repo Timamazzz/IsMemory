@@ -171,7 +171,7 @@ async def process_finish_order(message: types.Message, state: FSMContext):
     images = order_data.get('images', [])
 
     if images:
-        response = requests.patch(f'{API_URL}/orders/{order_id}/',
+        response = requests.put(f'{API_URL}/orders/{order_id}/',
                                   json={'images': images,
                                         'status': OrderStatusEnum.COMPLETED.name},
                                   headers=HEADERS)
