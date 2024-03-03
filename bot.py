@@ -188,6 +188,7 @@ async def process_finish_order(message: types.Message, state: FSMContext):
 
 @dp.message(F.photo)
 async def handle_completed_order(message: types.Message, state: FSMContext):
+    print('hello')
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
     if order_id:
