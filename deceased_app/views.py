@@ -22,7 +22,8 @@ class DeceasedViewSet(CustomModelViewSet):
         'retrieve': DeceasedSerializer,
         'create': DeceasedCreateSerializer,
     }
-    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = PageNumberPagination
+    permission_classes = [permissions.AllowAny]
 
 
 class SearchDeceasedAPIView(APIView):
@@ -64,7 +65,7 @@ class FavouritesDeceasedViewSet(CustomModelViewSet):
         'list': DeceasedFavouriteListSerializer,
         'favourite': DeceasedFavouriteSerializer,
     }
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def list(self, request, **kwargs):
         user = request.user

@@ -36,6 +36,7 @@ class CustomOptionsMetadata(SimpleMetadata):
 
     def get_field_info(self, field):
         field_info = OrderedDict()
+        print('field', field.__dict__)
         field_info['type'] = self.label_lookup[field]
         field_info['required'] = getattr(field, 'required', False)
 
