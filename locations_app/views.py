@@ -62,6 +62,14 @@ class CemeteryViewSet(CustomModelViewSet):
         serializer = CemeteryMapSerializer(cemetery, context={'request': request})
         return Response(serializer.data)
 
+    @action(detail=True, methods=['GET'])
+    def count(self, request, pk=None):
+        cemetery = self.get_object()
+        serializer = CemeteryMapSerializer(cemetery, context={'request': request})
+        serializer_data = serializer.data
+        count_of_plots_in_visible_area = len(serializer_data.get('cemetery_plots', []))
+        return Response({'count': count_of_plots_in_visible_area}, status=status.HTTP_200_OK)
+
     @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
     def public(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
