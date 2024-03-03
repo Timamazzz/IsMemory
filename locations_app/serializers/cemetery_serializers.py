@@ -117,12 +117,18 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
 
                 if visible_area_coords:
                     print("Visible area coordinates before evaluation:", visible_area_coords)
-                    visible_area_coords = eval(visible_area_coords)
+                    visible_area_coords = ast.literal_eval(visible_area_coords)
                     print("Visible area coordinates after evaluation:", visible_area_coords)
-                    visible_area_polygon_coords = [[float(coord) for coord in point] for point in visible_area_coords]
-                    print("Visible area coordinates after conversion:", visible_area_polygon_coords)
-                    visible_area_polygon = Polygon(visible_area_polygon_coords)
+                    point1, point2 = visible_area_coords
+
+                    # Составляем координаты вершин для построения полигона
+                    x_coords = [point1[0], point2[0], point2[0], point1[0]]
+                    y_coords = [point1[1], point1[1], point2[1], point2[1]]
+
+                    # Создаем полигон из координат
+                    visible_area_polygon = Polygon(zip(x_coords, y_coords))
                     print("Visible area polygon:", visible_area_polygon)
+
                     plots_in_visible_area = []
                     for plot in cemetery_plots:
                         if plot.coordinates:
