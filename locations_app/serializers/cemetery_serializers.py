@@ -123,10 +123,11 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
                     print("Visible area polygon:", visible_area_polygon)
                     plots_in_visible_area = []
                     for plot in cemetery_plots:
-                        plot_polygon = Polygon(plot.coordinates[0])
-                        print("Plot polygon:", plot_polygon)
-                        if plot_polygon.intersects(visible_area_polygon):
-                            plots_in_visible_area.append(plot)
+                        if plot.coordinates:
+                            plot_polygon = Polygon(plot.coordinates[0])
+                            print("Plot polygon:", plot_polygon)
+                            if plot_polygon.intersects(visible_area_polygon):
+                                plots_in_visible_area.append(plot)
                     print("Plots in visible area:", plots_in_visible_area)
                     return CemeteryPlotMapSerializer(plots_in_visible_area, many=True).data
 
