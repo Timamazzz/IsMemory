@@ -26,6 +26,10 @@ class DeceasedViewSet(CustomModelViewSet):
     permission_classes = [permissions.AllowAny]
     search_fields = ['first_name', 'last_name', 'patronymic']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
+
 
 class SearchDeceasedAPIView(APIView):
     queryset = Deceased.objects.all()
