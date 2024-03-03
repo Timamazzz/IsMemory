@@ -1,9 +1,12 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
 
 from IsMemory.helpers.CustomOptionsMetadata import CustomOptionsMetadata
 
 
 class CustomModelViewSet(viewsets.ModelViewSet):
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     serializer_list = {}
     metadata_class = CustomOptionsMetadata
 
