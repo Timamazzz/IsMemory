@@ -43,7 +43,7 @@ class CemeteryPlotImageSerializer(serializers.ModelSerializer):
 
 
 class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
-    deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
+    #deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
     images = CemeteryPlotImageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -52,7 +52,7 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
 
 
 class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
-    deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
+    #deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
 
     class Meta:
         model = CemeteryPlot
