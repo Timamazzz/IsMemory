@@ -116,13 +116,18 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
                 cemetery_plots = cemetery_plots.filter(status_filters, type_filters)
 
                 if visible_area_coords:
+                    print("Visible area coordinates before evaluation:", visible_area_coords)
                     visible_area_coords = ast.literal_eval(visible_area_coords)
+                    print("Visible area coordinates after evaluation:", visible_area_coords)
                     visible_area_polygon = Polygon(visible_area_coords)
+                    print("Visible area polygon:", visible_area_polygon)
                     plots_in_visible_area = []
                     for plot in cemetery_plots:
                         plot_polygon = Polygon(plot.coordinates[0])
+                        print("Plot polygon:", plot_polygon)
                         if plot_polygon.intersects(visible_area_polygon):
                             plots_in_visible_area.append(plot)
+                    print("Plots in visible area:", plots_in_visible_area)
                     return CemeteryPlotMapSerializer(plots_in_visible_area, many=True).data
 
             return CemeteryPlotMapSerializer(cemetery_plots, many=True).data
