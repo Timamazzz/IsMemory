@@ -59,7 +59,7 @@ class CustomOptionsMetadata(SimpleMetadata):
                 (isinstance(field, (
                         serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
                  hasattr(field, 'choices')):
-            if len(field.choices.items()) <= MAX_CHOICES_COUNT:
+            if len(field.choices) <= MAX_CHOICES_COUNT:
                 field_info['choices'] = [
                     {
                         'value': choice_value,
