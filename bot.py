@@ -6,8 +6,7 @@ import asyncio
 from aiogram.filters.command import Command
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from orders_app.enums import OrderStatusEnum
@@ -58,7 +57,6 @@ async def shared_contact(message: types.Message):
         data = {'phone_number': phone_number, 'chat_id': chat_id}
 
         response = requests.put(api_url, json=data, headers=HEADERS)
-        print('response', response.__dict__)
 
         if response.status_code == 200:
             main_keyboard = get_main_keyboard()
@@ -172,10 +170,9 @@ async def process_finish_order(message: types.Message, state: FSMContext):
 
     if images:
         response = requests.put(f'{API_URL}/orders/{order_id}/',
-                                  json={'images': images,
-                                        'status': OrderStatusEnum.COMPLETED.name},
-                                  headers=HEADERS)
-        print('response', response.__dict__)
+                                json={'images': images,
+                                      'status': OrderStatusEnum.COMPLETED.name},
+                                headers=HEADERS)
         if response.status_code == 200:
             await message.answer("Спасибо за предоставленные изображения. Ваш заказ завершен!")
             main_keyboard = get_main_keyboard()
@@ -192,7 +189,6 @@ async def process_finish_order(message: types.Message, state: FSMContext):
 
 @dp.message(F.photo)
 async def handle_completed_order(message: types.Message, state: FSMContext):
-    print('hello')
     order_data = await state.get_data()
     order_id = order_data.get('order_id')
     if order_id:
