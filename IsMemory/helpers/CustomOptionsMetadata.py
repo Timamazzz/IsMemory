@@ -61,6 +61,7 @@ class CustomOptionsMetadata(SimpleMetadata):
                  hasattr(field, 'choices')):
 
             #if len(field.choices) <= MAX_CHOICES_COUNT:
+            print('field.field_name', field.field_name)
             if field.field_name != 'deceased' and field.field_name != 'cemetery_plot':
                 field_info['choices'] = [
                     {
