@@ -28,7 +28,7 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
 class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
     class Meta:
         model = CemeteryPlot
-        exclude = ('deceased', )
+        fields = '__all__'
 
 
 class CemeteryPlotImageSerializer(serializers.ModelSerializer):
