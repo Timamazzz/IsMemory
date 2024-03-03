@@ -4,6 +4,7 @@ from rest_framework import serializers
 from locations_app.enums import CemeteryPlotStatusEnum, CemeteryPlotTypeEnum
 from locations_app.models import Cemetery, Municipality, CemeteryPlot
 from locations_app.serializers.cemetery_plot_serializers import CemeteryPlotMapSerializer
+from shapely.geometry import Polygon, Point
 
 
 class CemeterySerializer(serializers.ModelSerializer):
@@ -87,6 +88,7 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
         if request:
             statuses = request.query_params.get('status', None)
             types = request.query_params.get('type', None)
+            visible_area_coords = request.query_params.get('visible_area_coords', None)
 
             ignore_filters = 'ignore_filters' in request.query_params
 
@@ -110,6 +112,15 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
                         type_filters |= Q(type=type)
 
                 cemetery_plots = cemetery_plots.filter(status_filters, type_filters)
+
+                if visible_area_coords:
+                    visible_area_polygon = Polygon(visible_area_coords)
+                    plots_in_visible_area = []
+                    for plot in cemetery_plots:
+                        plot_polygon = Polygon(plot.coordinates[0])
+                        if plot_polygon.intersects(visible_area_polygon):
+                            plots_in_visible_area.append(plot)
+                    return CemeteryPlotMapSerializer(plots_in_visible_area, many=True).data
 
             return CemeteryPlotMapSerializer(cemetery_plots, many=True).data
 
