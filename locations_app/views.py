@@ -14,7 +14,7 @@ from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSer
                                                                  CemeteryPlotUpdateSerializer)
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer
-from django.db.models import Count, Case, When, IntegerField
+from django.db.models import Count, Case, When, IntegerField, Q
 
 
 # Create your views here.
@@ -91,7 +91,28 @@ class CemeteryPlotViewSet(CustomModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     def list(self, request, **kwargs):
+        statuses = request.query_params.get('status', None)
+        types = request.query_params.get('type', None)
+
+        statuses = statuses.split(',') if statuses else None
+        types = types.split(',') if types else None
+
+        status_filters = Q(status=None)
+        type_filters = Q(type=None)
+
+        if statuses:
+            status_filters = Q()
+            for status in statuses:
+                status_filters |= Q(status=status)
+
+        if types:
+            type_filters = Q()
+            for type in types:
+                type_filters |= Q(type=type)
+
         queryset = self.filter_queryset(self.get_queryset()).order_by('-id')
+        queryset = queryset.filter(status_filters, type_filters)
+
         page = self.paginate_queryset(queryset)
         serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
                                                                                                          many=True)

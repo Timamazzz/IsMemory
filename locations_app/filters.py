@@ -8,6 +8,7 @@ from locations_app.models import Cemetery, Municipality, CemeteryPlot
 class CemeteryFilter(filters.FilterSet):
     name = filters.CharFilter(field_name="name", lookup_expr='icontains')
     municipality = filters.CharFilter(field_name="municipality__id", lookup_expr='exact')
+    cemetery = filters.CharFilter(field_name="cemetery__id", lookup_expr='exact')
 
     class Meta:
         model = Cemetery
@@ -18,6 +19,8 @@ class CemeteryFilterSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, label="Наименование кладбища")
     municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=False,
                                                       label="Муниципальное образование")
+    cemetery=serializers.PrimaryKeyRelatedField(queryset=Cemetery.objects.all(), many=False, required=False,
+                                                label="Кладбище")
 
     class Meta:
         fields = ('name', 'municipality')
