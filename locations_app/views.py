@@ -119,7 +119,7 @@ class LargePagination(PageNumberPagination):
 class MapListView(ListAPIView):
     queryset = CemeteryPlot.objects.all().order_by('-id')
     pagination_class = LargePagination
-    filterset_class = CemeteryFilter
+    filterset_class = CemeteryPlotFilter
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
