@@ -1,4 +1,5 @@
 from rest_framework import status, permissions
+from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -114,17 +115,14 @@ class LargePagination(PageNumberPagination):
     page_size = 300
 
 
-class MapListView(APIView):
+class MapListView(ListAPIView):
     pagination_class = LargePagination
 
-    class MapListView(APIView):
-        pagination_class = LargePagination
-
-        def get(self, request, *args, **kwargs):
-            queryset = CemeteryPlot.objects.all().order_by('-id')
-            page = self.pagination_class().paginate_queryset(queryset, request, view=self)
-            serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
-                                                                                                             many=True)
-            return self.pagination_class().get_paginated_response(serializer.data) if page else Response(
-                serializer.data,
-                status=status.HTTP_200_OK)
+    def get(self, request, *args, **kwargs):
+        queryset = CemeteryPlot.objects.all().order_by('-id')
+        page = self.pagination_class().paginate_queryset(queryset, request, view=self)
+        serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
+                                                                                                         many=True)
+        return self.pagination_class().get_paginated_response(serializer.data) if page else Response(
+            serializer.data,
+            status=status.HTTP_200_OK)
