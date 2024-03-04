@@ -111,7 +111,8 @@ class CemeteryPlotViewSet(CustomModelViewSet):
                 type_filters |= Q(type=type)
 
         queryset = self.filter_queryset(self.get_queryset()).order_by('-id')
-        queryset = queryset.filter(status_filters, type_filters)
+        if statuses or types:
+            queryset = queryset.filter(status_filters, type_filters)
 
         page = self.paginate_queryset(queryset)
         serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
