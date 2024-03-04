@@ -91,10 +91,14 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
             statuses = request.query_params.get('status', None)
             types = request.query_params.get('type', None)
             visible_area_coords = request.query_params.get('visible_area_coords', None)
+            without_plots = request.query_params.get('without_plots', None)
 
             ignore_filters = 'ignore_filters' in request.query_params
 
-            cemetery_plots = CemeteryPlot.objects.filter(cemetery=obj)
+            if without_plots:
+                cemetery_plots = None
+            else:
+                cemetery_plots = CemeteryPlot.objects.filter(cemetery=obj)
 
             if not ignore_filters:
                 statuses = statuses.split(',') if statuses else None
