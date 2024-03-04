@@ -14,7 +14,8 @@ from locations_app.models import Cemetery, CemeteryPlot
 from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSerializer, CemeteryPlotListSerializer,
                                                                  CemeteryPlotCreateSerializer,
                                                                  CemeteryPlotRetrieveSerializer,
-                                                                 CemeteryPlotUpdateSerializer)
+                                                                 CemeteryPlotUpdateSerializer,
+                                                                 CemeteryPlotListMapSerializer)
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer
 from django.db.models import Count, Case, When, IntegerField, Q
@@ -121,7 +122,7 @@ class MapListView(ListAPIView):
     def get(self, request, *args, **kwargs):
         queryset = CemeteryPlot.objects.all().order_by('-id')
         page = self.pagination_class().paginate_queryset(queryset, request, view=self)
-        serializer = CemeteryPlotListSerializer(page, many=True) if page else CemeteryPlotListSerializer(queryset,
+        serializer = CemeteryPlotListMapSerializer(page, many=True) if page else CemeteryPlotListMapSerializer(queryset,
                                                                                                          many=True)
         return self.pagination_class().get_paginated_response(serializer.data) if page else Response(
             serializer.data,

@@ -22,7 +22,7 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
     class Meta:
         model = CemeteryPlot
         fields = ('id', 'cemetery', 'municipality', 'type', 'plot_number', 'sector', 'row', 'burial',
-                  'place', 'status', 'coordinates')
+                  'place', 'status')
 
 
 class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
@@ -63,3 +63,12 @@ class CemeteryPlotMapSerializer(serializers.ModelSerializer):
     class Meta:
         model = CemeteryPlot
         fields = ['id', 'plot_number', 'coordinates', 'status', 'type']
+
+
+class CemeteryPlotListMapSerializer(CemeteryPlotSerializer):
+    type = serializers.CharField(source='get_type_display', read_only=True, label="Тип")
+    status = serializers.CharField(source='get_status_display', read_only=True, label="Статус")
+
+    class Meta:
+        model = CemeteryPlot
+        fields = ('id', 'type', 'plot_number', 'sector', 'row', 'burial', 'place', 'status', 'coordinates')
