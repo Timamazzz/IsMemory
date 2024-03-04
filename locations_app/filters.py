@@ -12,18 +12,18 @@ class CemeteryFilter(filters.FilterSet):
 
     class Meta:
         model = Cemetery
-        fields = ['name', 'municipality']
+        fields = ['name', 'municipality', 'cemetery']
 
 
 class CemeteryFilterSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, label="Наименование кладбища")
     municipality = serializers.PrimaryKeyRelatedField(queryset=Municipality.objects.all(), many=False, required=False,
                                                       label="Муниципальное образование")
-    cemetery=serializers.PrimaryKeyRelatedField(queryset=Cemetery.objects.all(), many=False, required=False,
-                                                label="Кладбище")
+    cemetery = serializers.PrimaryKeyRelatedField(queryset=Cemetery.objects.all(), many=False, required=False,
+                                                  label="Кладбище")
 
     class Meta:
-        fields = ('name', 'municipality')
+        fields = ('name', 'municipality', 'cemetery')
 
 
 class CemeteryMapFilterSerializer(serializers.Serializer):

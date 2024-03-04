@@ -102,8 +102,8 @@ class CemeteryPlotViewSet(CustomModelViewSet):
 
         if statuses:
             status_filters = Q()
-            for status in statuses:
-                status_filters |= Q(status=status)
+            for status_filter in statuses:
+                status_filters |= Q(status=status_filter)
 
         if types:
             type_filters = Q()
