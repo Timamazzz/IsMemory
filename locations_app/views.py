@@ -121,9 +121,9 @@ class MapListView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         queryset = CemeteryPlot.objects.all().order_by('-id')
-        page = self.pagination_class().paginate_queryset(queryset, request, view=self)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request, view=self)
         serializer = CemeteryPlotListMapSerializer(page, many=True) if page else CemeteryPlotListMapSerializer(queryset,
-                                                                                                         many=True)
-        return self.pagination_class().get_paginated_response(serializer.data) if page else Response(
-            serializer.data,
-            status=status.HTTP_200_OK)
+                                                                                                                many=True)
+        return paginator.get_paginated_response(serializer.data) if page else Response(serializer.data,
+                                                                                          status=status.HTTP_200_OK)
