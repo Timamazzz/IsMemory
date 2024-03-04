@@ -117,13 +117,15 @@ class LargePagination(PageNumberPagination):
 
 
 class MapListView(ListAPIView):
+    queryset = CemeteryPlot.objects.all().order_by('-id')
     pagination_class = LargePagination
+    filterset_class = CemeteryFilter
 
     def get(self, request, *args, **kwargs):
-        queryset = CemeteryPlot.objects.all().order_by('-id')
-        paginator = self.pagination_class()
-        page = paginator.paginate_queryset(queryset, request, view=self)
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
         serializer = CemeteryPlotListMapSerializer(page, many=True) if page else CemeteryPlotListMapSerializer(queryset,
-                                                                                                                many=True)
-        return paginator.get_paginated_response(serializer.data) if page else Response(serializer.data,
-                                                                                          status=status.HTTP_200_OK)
+                                                                                                               many=True)
+
+        return self.get_paginated_response(serializer.data) if page else Response(serializer.data,
+                                                                                  status=status.HTTP_200_OK)
