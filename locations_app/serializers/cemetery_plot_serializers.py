@@ -22,7 +22,7 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
     class Meta:
         model = CemeteryPlot
         fields = ('id', 'cemetery', 'municipality', 'type', 'plot_number', 'sector', 'row', 'burial',
-                  'place', 'status')
+                  'place', 'status', 'coordinates')
 
 
 class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
