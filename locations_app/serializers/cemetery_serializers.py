@@ -96,7 +96,7 @@ class CemeteryMapSerializer(serializers.ModelSerializer):
             ignore_filters = 'ignore_filters' in request.query_params
 
             if without_plots:
-                cemetery_plots = None
+                return None
             else:
                 cemetery_plots = CemeteryPlot.objects.filter(cemetery=obj)
 
