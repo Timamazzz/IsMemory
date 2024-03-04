@@ -1,8 +1,10 @@
 from django_filters import rest_framework as filters
 from rest_framework import serializers
 
+from IsMemory.helpers.filters import MultipleValueFilter
 from locations_app.enums import CemeteryPlotStatusEnum, CemeteryPlotTypeEnum
 from locations_app.models import Cemetery, Municipality, CemeteryPlot
+from django.forms.fields import CharField
 
 
 class CemeteryFilter(filters.FilterSet):
@@ -46,9 +48,8 @@ class CemeteryPlotFilter(filters.FilterSet):
     cemetery = filters.CharFilter(field_name="cemetery__id", lookup_expr='exact')
     municipality = filters.CharFilter(field_name="cemetery__municipality__id", lookup_expr='exact')
 
-    type = filters.ChoiceFilter(choices=[(enum.name, enum.value) for enum in CemeteryPlotTypeEnum], field_name='type')
-    status = filters.ChoiceFilter(choices=[(enum.name, enum.value) for enum in CemeteryPlotStatusEnum],
-                                  field_name='status')
+    type = MultipleValueFilter(field_class=CharField)
+    status = MultipleValueFilter(field_class=CharField)
 
     plot_number = filters.CharFilter(field_name='plot_number', lookup_expr='icontains')
     sector = filters.CharFilter(field_name='sector', lookup_expr='icontains')
