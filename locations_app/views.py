@@ -115,6 +115,11 @@ class CemeteryPlotViewSet(CustomModelViewSet):
 class LargePagination(PageNumberPagination):
     page_size = 300
 
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data['total_pages'] = self.page.paginator.num_pages
+        return response
+
 
 class MapListView(ListAPIView):
     queryset = CemeteryPlot.objects.all().order_by('-id')
