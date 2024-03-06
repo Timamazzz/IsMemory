@@ -42,7 +42,7 @@ class OrderListSerializer(OrderSerializer):
 
 
 class OrderCreateSerializer(OrderSerializer):
-    deceased = serializers.PrimaryKeyRelatedField(queryset=Deceased.objects.all(), required=True)
+    deceased = serializers.PrimaryKeyRelatedField(required=True)
     class Meta:
         model = Order
         fields = ['service', 'deceased', 'count', 'user', 'payment_id']
