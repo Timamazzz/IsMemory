@@ -60,7 +60,7 @@ class CustomOptionsMetadata(SimpleMetadata):
                         serializers.RelatedField, serializers.ManyRelatedField, serializers.PrimaryKeyRelatedField)) or
                  hasattr(field, 'choices')):
 
-            if field.field_name != 'cemetery_plot':
+            if field.field_name != 'cemetery_plot' and field.field_name != 'deceased':
                 field_info['choices'] = [
                     {
                         'value': choice_value,

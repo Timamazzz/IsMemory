@@ -4,7 +4,6 @@ from rest_framework import serializers
 from deceased_app.serializers.deceased_serializers import DeceasedForOrderSerializer
 from docs_app.models import OrderImage
 from orders_app.models import Order
-from deceased_app.models import Deceased
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -42,7 +41,6 @@ class OrderListSerializer(OrderSerializer):
 
 
 class OrderCreateSerializer(OrderSerializer):
-    deceased = serializers.IntegerField(required=True)
 
     class Meta:
         model = Order
