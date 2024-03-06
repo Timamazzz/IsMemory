@@ -78,4 +78,4 @@ class CemeteryPlotListMapSerializer(CemeteryPlotSerializer):
 
     class Meta:
         model = CemeteryPlot
-        fields = ('id', 'type', 'plot_number', 'sector', 'row', 'burial', 'place', 'status', 'coordinates')
+        fields = ('id', 'type', 'plot_number', 'sector', 'row', 'burial', 'place', 'status', 'preview_image', 'coordinates')
