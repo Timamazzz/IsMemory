@@ -17,10 +17,10 @@ class OrderImageInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    readonly_fields = ('deceased',)
     list_display = ('date', 'executor', 'service', 'is_good', 'is_bad', 'status')
     inlines = [OrderImageInline]
-
     list_filter = ('date', 'service', 'is_good', 'is_bad', 'status')
 
-    readonly_fields = ('deceased',)
+
 
