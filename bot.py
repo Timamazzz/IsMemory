@@ -142,7 +142,7 @@ async def view_order_details(message: types.Message):
 
         coordinates = order_details.get('coordinates')
         if coordinates:
-            details_text += f"Координаты участка: {coordinates.first()}\n"
+            details_text += f"Координаты участка: {coordinates[0]}\n"
         else:
             details_text += "Координаты участка отсутствуют.\n"
 
