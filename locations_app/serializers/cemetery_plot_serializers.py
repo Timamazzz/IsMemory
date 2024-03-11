@@ -47,7 +47,7 @@ class CemeteryPlotImageSerializer(serializers.ModelSerializer):
 
 class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
-    images = CemeteryPlotImageSerializer(many=True, read_only=True)
+    images = CemeteryPlotImageFromPlotSerializer(many=True, read_only=True)
 
     class Meta:
         model = CemeteryPlot
@@ -56,7 +56,7 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
 
 class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
-    images = CemeteryPlotImageSerializer(many=True)
+    images = CemeteryPlotImageFromPlotSerializer(many=True)
 
     class Meta:
         model = CemeteryPlot
@@ -73,15 +73,6 @@ class CemeteryPlotListMapSerializer(CemeteryPlotSerializer):
     type = serializers.CharField(source='get_type_display', read_only=True, label="Тип")
     status = serializers.CharField(source='get_status_display', read_only=True, label="Статус")
 
-    # preview_image = serializers.SerializerMethodField()
-
-    # def get_preview_image(self, obj):
-    #     preview_image = obj.images.filter(is_preview=True).first()
-    #     if preview_image:
-    #         return preview_image.file.url
-    #     return None
-
     class Meta:
         model = CemeteryPlot
-        # fields = ('id', 'type', 'plot_number', 'sector', 'row', 'burial', 'place', 'status', 'preview_image', 'coordinates')
         fields = ('id', 'type', 'plot_number', 'sector', 'row', 'burial', 'place', 'status', 'coordinates')
