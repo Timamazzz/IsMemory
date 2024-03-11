@@ -78,9 +78,11 @@ class CemeteryPlotFilterSerializers(serializers.Serializer):
                                      required=False, label="Статус")
 
     plot_number = serializers.CharField(required=False, label="Номер участка")
-    last_name_deceased = serializers.CharField(required=False, label="Фамилия усопшего")
-    first_name_deceased = serializers.CharField(required=False, label="Имя усопшего")
-    patronymic_deceased = serializers.CharField(required=False, label="Отчество усопшего")
+
+    deceased_last_name = serializers.CharField(required=False, label="Фамилия усопшего")
+    deceased_first_name = serializers.CharField(required=False, label="Имя усопшего")
+    deceased_patronymic = serializers.CharField(required=False, label="Отчество усопшего")
+
     sector = serializers.CharField(required=False, label="Сектор")
     row = serializers.CharField(required=False, label="Ряд")
     burial = serializers.CharField(required=False, label="Захоронение")
