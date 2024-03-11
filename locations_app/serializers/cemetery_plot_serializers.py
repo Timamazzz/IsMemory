@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from deceased_app.serializers.deceased_serializers import DeceasedFromCemeteryPlotSerializer
 from docs_app.models import CemeteryPlotImage
-from docs_app.serializers.cemetery_plot_serializers import AvatarSerializer
+from docs_app.serializers.cemetery_plot_serializers import CemeteryPlotImageFromPlotSerializer
 from locations_app.models import CemeteryPlot
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -27,7 +27,7 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
 
 
 class CemeteryPlotCreateSerializer(WritableNestedModelSerializer):
-    images = AvatarSerializer(many=True)
+    images = CemeteryPlotImageFromPlotSerializer(many=True)
 
     class Meta:
         model = CemeteryPlot
@@ -51,12 +51,12 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
 
     class Meta:
         model = CemeteryPlot
-        fields = '__all__'
+        fields = ['id', 'cemetery', 'coordinates', 'plot_number', 'sector', 'row', 'burial', 'place', 'type', 'status', 'description', 'note', 'deceased']
 
 
 class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
-    images = AvatarSerializer(many=True)
+    images = CemeteryPlotImageSerializer(many=True)
 
     class Meta:
         model = CemeteryPlot
