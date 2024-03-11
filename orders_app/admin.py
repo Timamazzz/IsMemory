@@ -17,7 +17,7 @@ class OrderImageInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('date', 'executor', 'service', 'deceased', 'is_good', 'is_bad', 'status')
+    list_display = ('date', 'executor', 'service', 'is_good', 'is_bad', 'status')
     inlines = [OrderImageInline]
 
     list_filter = ('date', 'service', 'is_good', 'is_bad', 'status')
