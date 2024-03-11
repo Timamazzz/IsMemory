@@ -51,7 +51,7 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
 
     class Meta:
         model = CemeteryPlot
-        fields = ['id', 'cemetery', 'coordinates', 'plot_number', 'sector', 'row', 'burial', 'place', 'type', 'status', 'description', 'note', 'deceased']
+        fields = ['id', 'cemetery', 'coordinates', 'plot_number', 'sector', 'row', 'burial', 'place', 'type', 'status', 'description', 'note', 'images', 'deceased']
 
 
 class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
