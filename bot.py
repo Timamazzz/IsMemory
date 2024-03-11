@@ -136,9 +136,16 @@ async def view_order_details(message: types.Message):
         deceased_info = order_details.get('deceased', {})
         details_text += (f"Усопший:  {deceased_info.get('first_name', '')} "
                          f"{deceased_info.get('last_name', '')} "
-                         f"{deceased_info.get('patronymic', '')}\n")
+                         f"{deceased_info.get('patronymic', '')} \n")
 
         details_text += f"Кладбище: {deceased_info.get('cemetery_name', '')}, {deceased_info.get('cemetery_municipality_name', '')}\n"
+
+        coordinates = order_details.get('coordinates')
+        if coordinates:
+            details_text += f"Координаты участка: {coordinates}\n"
+        else:
+            details_text += "Координаты участка отсутствуют.\n"
+
         await message.answer(details_text)
     else:
         await message.answer("Не удалось получить информацию о заказе. Попробуйте позже.")

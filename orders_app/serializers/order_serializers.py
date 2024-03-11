@@ -24,6 +24,13 @@ class OrderDetailSerializer(OrderSerializer):
     images = OrderImageSerializer(source="images_order_rel", many=True, required=False)
     service_name = serializers.CharField(source="service.name", required=False)
     deceased = DeceasedForOrderSerializer()
+    coordinates = serializers.SerializerMethodField()
+
+    def get_coordinates(self, obj):
+        if obj.deceased:
+            if obj.deceased.cemetery_plot:
+                return obj.deceased.cemetery_plot.coordinates
+        return None
 
     class Meta:
         model = Order
@@ -41,7 +48,6 @@ class OrderListSerializer(OrderSerializer):
 
 
 class OrderCreateSerializer(OrderSerializer):
-
     class Meta:
         model = Order
         fields = ['service', 'deceased', 'count', 'user', 'payment_id']
