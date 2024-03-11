@@ -22,5 +22,10 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_filter = ('date', 'service', 'is_good', 'is_bad', 'status')
 
-    exclude = ('deceased',)
+    def deceased_name(self, obj):
+        if obj.deceased:
+            return f"{obj.deceased.first_name} {obj.deceased.last_name} {obj.deceased.patronymic}"
+        return None
+
+    deceased_name.short_description = "Усопший"
 
