@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from deceased_app.serializers.deceased_serializers import DeceasedFromCemeteryPlotSerializer
 from docs_app.models import CemeteryPlotImage
+from docs_app.serializers.cemetery_plot_serializers import AvatarSerializer
 from locations_app.models import CemeteryPlot
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -25,7 +26,9 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
                   'place', 'status')
 
 
-class CemeteryPlotCreateSerializer(CemeteryPlotSerializer):
+class CemeteryPlotCreateSerializer(WritableNestedModelSerializer):
+    images = AvatarSerializer(many=True)
+
     class Meta:
         model = CemeteryPlot
         fields = '__all__'
@@ -53,6 +56,7 @@ class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
 
 class CemeteryPlotUpdateSerializer(WritableNestedModelSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
+    images = AvatarSerializer(many=True)
 
     class Meta:
         model = CemeteryPlot
@@ -68,7 +72,8 @@ class CemeteryPlotMapSerializer(serializers.ModelSerializer):
 class CemeteryPlotListMapSerializer(CemeteryPlotSerializer):
     type = serializers.CharField(source='get_type_display', read_only=True, label="Тип")
     status = serializers.CharField(source='get_status_display', read_only=True, label="Статус")
-    #preview_image = serializers.SerializerMethodField()
+
+    # preview_image = serializers.SerializerMethodField()
 
     # def get_preview_image(self, obj):
     #     preview_image = obj.images.filter(is_preview=True).first()
