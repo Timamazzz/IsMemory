@@ -46,7 +46,7 @@ class CemeteryPlotImageSerializer(serializers.ModelSerializer):
         return obj.file.url
 
 
-class CemeteryPlotRetrieveSerializer(CemeteryPlotSerializer):
+class CemeteryPlotRetrieveSerializer(WritableNestedModelSerializer):
     deceased = DeceasedFromCemeteryPlotSerializer(many=True, source='cemetery_plot_set')
     images = CemeteryPlotImageFromPlotSerializer(many=True, read_only=True)
 
