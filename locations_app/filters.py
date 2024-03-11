@@ -52,6 +52,11 @@ class CemeteryPlotFilter(filters.FilterSet):
     status = MultipleValueFilter(field_class=CharField)
 
     plot_number = filters.CharFilter(field_name='plot_number', lookup_expr='icontains')
+
+    deceased_first_name = filters.CharFilter(field_name='cemetery_plot_set__first_name', lookup_expr='icontains')
+    deceased_last_name = filters.CharFilter(field_name='cemetery_plot_set__last_name', lookup_expr='icontains')
+    deceased_patronymic = filters.CharFilter(field_name='cemetery_plot_set__patronymic', lookup_expr='icontains')
+
     sector = filters.CharFilter(field_name='sector', lookup_expr='icontains')
     row = filters.CharFilter(field_name='row', lookup_expr='icontains')
     burial = filters.CharFilter(field_name='burial', lookup_expr='icontains')
@@ -73,6 +78,9 @@ class CemeteryPlotFilterSerializers(serializers.Serializer):
                                      required=False, label="Статус")
 
     plot_number = serializers.CharField(required=False, label="Номер участка")
+    last_name_deceased = serializers.CharField(required=False, label="Фамилия усопшего")
+    first_name_deceased = serializers.CharField(required=False, label="Имя усопшего")
+    patronymic_deceased = serializers.CharField(required=False, label="Отчество усопшего")
     sector = serializers.CharField(required=False, label="Сектор")
     row = serializers.CharField(required=False, label="Ряд")
     burial = serializers.CharField(required=False, label="Захоронение")

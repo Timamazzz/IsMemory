@@ -45,8 +45,7 @@ class Command(BaseCommand):
             loaded_images = 0
 
             for page_num in tqdm(range(start_page, total_pages + 1), desc='Pages processed'):
-                url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth'
-                       f'-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={page_num}')
+                url = (f'https://memorial31.ru/graves/search/results?surName=&name=&middleName=&yearOfBirth=&birth-status=exactly&yearOfDeath=3000&death-status=after&locality=&graveyard=Ячнево&page={page_num}')
                 page = requests.get(url, headers=headers)
                 soup_main = BeautifulSoup(page.text, 'html.parser')
 
