@@ -22,3 +22,5 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_filter = ('date', 'service', 'is_good', 'is_bad', 'status')
 
+    exclude = ('deceased',)
+
