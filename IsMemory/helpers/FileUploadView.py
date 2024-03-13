@@ -45,7 +45,7 @@ class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request, *args, **kwargs):
-        return  Response(json.dumps(request), status=status.HTTP_200_OK)
+        print("request", request.__dict__)
         serializer = FileSerializer(data={'file': request.FILES.getlist('file')}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
