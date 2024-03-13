@@ -50,7 +50,7 @@ def save_uploaded_files(uploaded_files, path):
             print('path to upload', os.path.join(path, new_name))
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
-            url = default_storage.url(save_path)
+            url = request.build_absolute_uri(default_storage.url(save_path))
 
 
         file_data = {
