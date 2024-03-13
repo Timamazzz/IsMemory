@@ -48,7 +48,6 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
             except Exception as e:
                 return HttpResponseServerError("Internal Server Error")
 
-        url = url.replace("media/", "")
         file_data = {
             'file': url,
             'original_name': original_name,
