@@ -6,6 +6,7 @@ from rest_framework import status, serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import json
 
 
 class FileSerializer(serializers.Serializer):
@@ -44,7 +45,7 @@ class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request, *args, **kwargs):
-        return  Response(request.json(), status=status.HTTP_200_OK)
+        return  Response(json.dumps(request), status=status.HTTP_200_OK)
         serializer = FileSerializer(data={'file': request.FILES.getlist('file')}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
