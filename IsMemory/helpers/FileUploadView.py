@@ -20,7 +20,8 @@ class FileUploadSerializer(serializers.Serializer):
 def save_uploaded_files(uploaded_files, path):
     result_data = []
 
-    for uploaded_file in uploaded_files:
+    for index, uploaded_file in enumerate(uploaded_files):
+        print('index', index)
         original_name = None
         extension = None
         url = None
@@ -46,14 +47,10 @@ def save_uploaded_files(uploaded_files, path):
             new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
             print('original_name', original_name)
-            print('extension', extension)
-            print('new_name', new_name)
+            print('path to upload', os.path.join(path, new_name))
 
             path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(path)
-
-            print('path', path)
-            print('url', url)
 
 
         file_data = {
@@ -71,6 +68,7 @@ class FileUploadView(APIView):
     serializer_class = FileUploadSerializer
 
     def post(self, request, *args, **kwargs):
+        print('---------------------------------------')
         uploaded_files = request.FILES.getlist('files')
         print('files', request.FILES)
         print('uploaded_files', uploaded_files)
@@ -79,6 +77,7 @@ class FileUploadView(APIView):
         try:
             result_data = save_uploaded_files(uploaded_files, path)
             print('result_data', result_data)
+            print('---------------------------------------')
             return Response(result_data, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
