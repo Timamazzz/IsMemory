@@ -19,47 +19,47 @@ class FileUploadSerializer(serializers.Serializer):
 
 def save_uploaded_files(request, uploaded_files, path):
     result_data = []
-    for field_name, field_files in uploaded_files:
-        for index, uploaded_file in enumerate(field_files):
-            print('index', index)
-            original_name = None
-            extension = None
-            url = None
 
-            if isinstance(uploaded_file, str):
-                print("File is a URL")
-                response = requests.get(uploaded_file)
-                if response.status_code == 200:
-                    content_type = response.headers.get('content-type')
-                    extension = content_type.split('/')[-1] if content_type else ''
-                    new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
+    for index, uploaded_file in enumerate(uploaded_files):
+        print('index', index)
+        original_name = None
+        extension = None
+        url = None
 
-                    try:
-                        save_path = default_storage.save(os.path.join(path, new_name), ContentFile(response.content))
-                        url = default_storage.url(save_path)
-                    except Exception as e:
-                        return HttpResponseServerError("Internal Server Error")
-            else:
-                print("File is an uploaded file")
-
-                original_name = uploaded_file.name
-                extension = os.path.splitext(original_name)[-1].lower()
+        if isinstance(uploaded_file, str):
+            print("File is a URL")
+            response = requests.get(uploaded_file)
+            if response.status_code == 200:
+                content_type = response.headers.get('content-type')
+                extension = content_type.split('/')[-1] if content_type else ''
                 new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
-                print('original_name', original_name)
-                print('path to upload', os.path.join(path, new_name))
+                try:
+                    save_path = default_storage.save(os.path.join(path, new_name), ContentFile(response.content))
+                    url = default_storage.url(save_path)
+                except Exception as e:
+                    return HttpResponseServerError("Internal Server Error")
+        else:
+            print("File is an uploaded file")
 
-                save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
-                url = request.build_absolute_uri(default_storage.url(save_path))
+            original_name = uploaded_file.name
+            extension = os.path.splitext(original_name)[-1].lower()
+            new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
+
+            print('original_name', original_name)
+            print('path to upload', os.path.join(path, new_name))
+
+            save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
+            url = request.build_absolute_uri(default_storage.url(save_path))
 
 
-            file_data = {
-                'file': url,
-                'original_name': original_name,
-                'extension': extension,
-            }
+        file_data = {
+            'file': url,
+            'original_name': original_name,
+            'extension': extension,
+        }
 
-            result_data.append(file_data)
+        result_data.append(file_data)
 
     return result_data
 
@@ -69,7 +69,7 @@ class FileUploadView(APIView):
 
     def post(self, request, *args, **kwargs):
         print('---------------------------------------')
-        uploaded_files = request.FILES.items()
+        uploaded_files = request.FILES.getlist('files')
         print('files', request.FILES)
         print('uploaded_files', uploaded_files)
         path = request.GET.get('path', 'uploads/')
