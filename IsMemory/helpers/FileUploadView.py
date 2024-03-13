@@ -1,55 +1,72 @@
-import os
-from datetime import datetime
-from django.core.files.storage import default_storage
-from django.utils.text import slugify, get_valid_filename
-from rest_framework import status, serializers
-from rest_framework.parsers import MultiPartParser
-from rest_framework.response import Response
+from uuid import uuid4
+
+import requests
+from django.core.files.base import ContentFile
+from django.http import HttpResponseServerError
+from rest_framework import serializers
 from rest_framework.views import APIView
-import json
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.files.storage import default_storage
+from datetime import datetime
+import os
+from urllib.parse import urlparse
 
 
-class FileSerializer(serializers.Serializer):
-    url = serializers.SerializerMethodField()
-    name = serializers.CharField()
-    original_name = serializers.CharField()
-    date = serializers.DateTimeField()
-    extension = serializers.CharField()
+class FileUploadSerializer(serializers.Serializer):
+    files = serializers.ListField(child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=False))
 
-    def get_url(self, obj):
-        return default_storage.url(obj['name'])
 
-    def create(self, validated_data):
-        file_list = validated_data['file']
-        response_files = []
+def save_uploaded_files(uploaded_files, path='uploads/'):
+    result_data = []
 
-        for file_item in file_list:
-            original_name = file_item.name
-            file_extension = os.path.splitext(original_name)[-1].lower()
+    for uploaded_file in uploaded_files:
+        original_name = None
+        extension = None
+        url = None
 
-            slug_field_name = slugify(original_name)
-            file_name = get_valid_filename(slug_field_name)
-            file_name = default_storage.save(file_name, file_item)
+        if isinstance(uploaded_file, str):
+            response = requests.get(uploaded_file)
+            if response.status_code == 200:
+                content_type = response.headers.get('content-type')
+                extension = content_type.split('/')[-1] if content_type else ''
+                new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
 
-            response_files.append({
-                "name": file_name,
-                "original_name": original_name,
-                "date": datetime.now().isoformat(),
-                "extension": file_extension,
-            })
+                try:
+                    path = default_storage.save(os.path.join(path, new_name), ContentFile(response.content))
+                    url = default_storage.url(path)
+                except Exception as e:
+                    return HttpResponseServerError("Internal Server Error")
+        else:
+            original_name = uploaded_file.name
+            extension = os.path.splitext(original_name)[-1].lower()
+            new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
-        return self.to_representation(response_files)
+            try:
+                path = default_storage.save(os.path.join(path, new_name), uploaded_file)
+                url = default_storage.url(path)
+            except Exception as e:
+                return HttpResponseServerError("Internal Server Error")
+
+        url = url.replace("media/", "")
+        file_data = {
+            'file': url,
+            'original_name': original_name,
+            'extension': extension,
+        }
+
+        result_data.append(file_data)
+
+    return result_data
 
 
 class FileUploadView(APIView):
-    parser_classes = [MultiPartParser]
+    serializer_class = FileUploadSerializer
 
     def post(self, request, *args, **kwargs):
-        print("request", request.__dict__)
-        print("files", request.FILES)
-        print("get files", request.FILES.getlist('file'))
-        serializer = FileSerializer(data={'file': request.FILES.getlist('file')}, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        uploaded_files = request.FILES.getlist('files')
+        path = request.GET.get('path', 'uploads/')
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        result_data = save_uploaded_files(uploaded_files, path)
+
+        return Response(result_data, status=status.HTTP_201_CREATED)
