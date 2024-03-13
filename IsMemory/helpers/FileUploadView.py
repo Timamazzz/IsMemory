@@ -26,6 +26,7 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
         url = None
 
         if isinstance(uploaded_file, str):
+            print("File is a URL")
             response = requests.get(uploaded_file)
             if response.status_code == 200:
                 content_type = response.headers.get('content-type')
@@ -38,13 +39,22 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
                 except Exception as e:
                     return HttpResponseServerError("Internal Server Error")
         else:
+            print("File is an uploaded file")
+
             original_name = uploaded_file.name
             extension = os.path.splitext(original_name)[-1].lower()
             new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
+            print('original_name', original_name)
+            print('extension', extension)
+            print('new_name', new_name)
+
             try:
                 path = default_storage.save(os.path.join(path, new_name), uploaded_file)
                 url = default_storage.url(path)
+
+                print('path', path)
+                print('url', url)
             except Exception as e:
                 return HttpResponseServerError("Internal Server Error")
 
@@ -64,8 +74,9 @@ class FileUploadView(APIView):
 
     def post(self, request, *args, **kwargs):
         uploaded_files = request.FILES.getlist('files')
+        print('uploaded_files', uploaded_files)
         path = request.GET.get('path', 'uploads/')
 
         result_data = save_uploaded_files(uploaded_files, path)
-
+        print('result_data', result_data)
         return Response(result_data, status=status.HTTP_201_CREATED)
