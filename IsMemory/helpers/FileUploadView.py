@@ -43,7 +43,7 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
 
             original_name = uploaded_file.name
             extension = os.path.splitext(original_name)[-1].lower()
-            new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
+            new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
             print('original_name', original_name)
             print('extension', extension)
