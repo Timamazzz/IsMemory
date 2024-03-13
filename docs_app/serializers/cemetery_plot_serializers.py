@@ -12,6 +12,7 @@ class CemeteryPlotImageFromPlotSerializer(serializers.ModelSerializer):
 
 
 class CemeteryPlotCreateUpdateImageFromPlotSerializer(serializers.ModelSerializer):
+    file = serializers.CharField()
 
     class Meta:
         model = CemeteryPlotImage
