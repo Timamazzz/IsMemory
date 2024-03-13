@@ -4,7 +4,7 @@ from docs_app.models import CemeteryPlotImage
 
 
 class CemeteryPlotImageFromPlotSerializer(serializers.ModelSerializer):
-
+    file = serializers.CharField()
 
     class Meta:
         model = CemeteryPlotImage
