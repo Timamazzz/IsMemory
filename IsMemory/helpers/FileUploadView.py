@@ -17,7 +17,7 @@ class FileUploadSerializer(serializers.Serializer):
     files = serializers.ListField(child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=False))
 
 
-def save_uploaded_files(uploaded_files, path):
+def save_uploaded_files(request, uploaded_files, path):
     result_data = []
 
     for index, uploaded_file in enumerate(uploaded_files):
@@ -75,7 +75,7 @@ class FileUploadView(APIView):
         path = request.GET.get('path', 'uploads/')
 
         try:
-            result_data = save_uploaded_files(uploaded_files, path)
+            result_data = save_uploaded_files(request, uploaded_files, path)
             print('result_data', result_data)
             print('---------------------------------------')
             return Response(result_data, status=status.HTTP_201_CREATED)
