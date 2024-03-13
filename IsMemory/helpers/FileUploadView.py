@@ -25,7 +25,6 @@ def save_uploaded_files(uploaded_files, path):
         original_name = None
         extension = None
         url = None
-        save_path=path
 
         if isinstance(uploaded_file, str):
             print("File is a URL")
@@ -36,7 +35,7 @@ def save_uploaded_files(uploaded_files, path):
                 new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
                 try:
-                    save_path = default_storage.save(os.path.join(save_path, new_name), ContentFile(response.content))
+                    save_path = default_storage.save(os.path.join(path, new_name), ContentFile(response.content))
                     url = default_storage.url(save_path)
                 except Exception as e:
                     return HttpResponseServerError("Internal Server Error")
@@ -50,7 +49,7 @@ def save_uploaded_files(uploaded_files, path):
             print('original_name', original_name)
             print('path to upload', os.path.join(path, new_name))
 
-            save_path = default_storage.save(os.path.join(save_path, new_name), uploaded_file)
+            save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)
 
 
