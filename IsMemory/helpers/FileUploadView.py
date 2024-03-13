@@ -49,14 +49,12 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
             print('extension', extension)
             print('new_name', new_name)
 
-            try:
-                path = default_storage.save(os.path.join(path, new_name), uploaded_file)
-                url = default_storage.url(path)
+            path = default_storage.save(os.path.join(path, new_name), uploaded_file)
+            url = default_storage.url(path)
 
-                print('path', path)
-                print('url', url)
-            except Exception as e:
-                return HttpResponseServerError("Internal Server Error")
+            print('path', path)
+            print('url', url)
+
 
         file_data = {
             'file': url,
