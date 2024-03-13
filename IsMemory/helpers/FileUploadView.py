@@ -74,6 +74,7 @@ class FileUploadView(APIView):
 
     def post(self, request, *args, **kwargs):
         uploaded_files = request.FILES.getlist('files')
+        print('files', request.FILES)
         print('uploaded_files', uploaded_files)
         path = request.GET.get('path', 'uploads/')
 
