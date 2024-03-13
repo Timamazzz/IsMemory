@@ -17,7 +17,7 @@ class FileUploadSerializer(serializers.Serializer):
     files = serializers.ListField(child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=False))
 
 
-def save_uploaded_files(uploaded_files, path='uploads/'):
+def save_uploaded_files(uploaded_files, path):
     result_data = []
 
     for uploaded_file in uploaded_files:
@@ -31,7 +31,7 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
             if response.status_code == 200:
                 content_type = response.headers.get('content-type')
                 extension = content_type.split('/')[-1] if content_type else ''
-                new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
+                new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
                 try:
                     path = default_storage.save(os.path.join(path, new_name), ContentFile(response.content))
@@ -43,7 +43,7 @@ def save_uploaded_files(uploaded_files, path='uploads/'):
 
             original_name = uploaded_file.name
             extension = os.path.splitext(original_name)[-1].lower()
-            new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
+            new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
             print('original_name', original_name)
             print('extension', extension)
