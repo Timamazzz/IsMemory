@@ -78,6 +78,9 @@ class FileUploadView(APIView):
         print('uploaded_files', uploaded_files)
         path = request.GET.get('path', 'uploads/')
 
-        result_data = save_uploaded_files(uploaded_files, path)
-        print('result_data', result_data)
-        return Response(result_data, status=status.HTTP_201_CREATED)
+        try:
+            result_data = save_uploaded_files(uploaded_files, path)
+            print('result_data', result_data)
+            return Response(result_data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
