@@ -46,6 +46,8 @@ class FileUploadView(APIView):
 
     def post(self, request, *args, **kwargs):
         print("request", request.__dict__)
+        print("files", request.FILES)
+        print("get files", request.FILES.getlist('file'))
         serializer = FileSerializer(data={'file': request.FILES.getlist('file')}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
