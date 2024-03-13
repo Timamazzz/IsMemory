@@ -37,14 +37,14 @@ class FileSerializer(serializers.Serializer):
                 "extension": file_extension,
             })
 
-        return response_files
-
+        return self.to_representation(response_files)
 
 
 class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request, *args, **kwargs):
+        return  Response(request.json(), status=status.HTTP_200_OK)
         serializer = FileSerializer(data={'file': request.FILES.getlist('file')}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
