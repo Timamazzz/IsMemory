@@ -30,5 +30,5 @@ urlpatterns = [
     path('api/orders/', include('orders_app.urls')),
     re_path(r'^media/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-    path('upload/', FileUploadView.as_view(), name='file-upload'),
+    path('api/upload/', FileUploadView.as_view(), name='file-upload'),
 ]
