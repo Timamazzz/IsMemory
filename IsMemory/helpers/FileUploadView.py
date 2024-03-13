@@ -37,7 +37,8 @@ class FileSerializer(serializers.Serializer):
                 "extension": file_extension,
             })
 
-        return self.to_representation(response_files)
+        return response_files
+
 
 
 class FileUploadView(APIView):
