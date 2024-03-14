@@ -15,20 +15,18 @@ class CemeteryPlotSerializer(serializers.ModelSerializer):
 
 
 class CemeteryPlotListSerializer(CemeteryPlotSerializer):
-    municipality = serializers.CharField(source='cemetery.municipality.name', read_only=True,
-                                         label="Муниципальное образование")
+    municipality = serializers.CharField(source='cemetery.municipality.name', read_only=True, label="Муниципальное образование")
     type = serializers.CharField(source='get_type_display', read_only=True, label="Тип")
     status = serializers.CharField(source='get_status_display', read_only=True, label="Статус")
     cemetery = serializers.CharField(source='cemetery.name', read_only=True, label="Кладбище")
-
-    deceased_first_name = serializers.CharField(source='cemetery_plot_set.first_name', read_only=True, label="Имя")
-    deceased_last_name = serializers.CharField(source='cemetery_plot_set.last_name', read_only=True, label="Фамилия")
-    deceased_patronymic = serializers.CharField(source='cemetery_plot_set.patronymic', read_only=True, label="Отчество")
+    first_name = serializers.CharField(source='cemetery_plot_set.first_name', read_only=True, label="Имя")
+    last_name = serializers.CharField(source='cemetery_plot_set.last_name', read_only=True, label="Фамилия")
+    patronymic = serializers.CharField(source='cemetery_plot_set.patronymic', read_only=True, label="Отчество")
 
     class Meta:
         model = CemeteryPlot
-        fields = ('id', 'cemetery', 'municipality', 'type', 'plot_number', 'sector', 'row', 'burial',
-                  'place', 'deceased_first_name', 'deceased_last_name', 'deceased_patronymic',  'status')
+        fields = ('id', 'cemetery', 'municipality', 'type', 'plot_number', 'sector', 'row', 'burial', 'place', 'status', 'first_name', 'last_name', 'patronymic')
+
 
 
 class CemeteryPlotCreateSerializer(WritableNestedModelSerializer):
