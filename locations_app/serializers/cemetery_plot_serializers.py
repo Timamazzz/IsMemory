@@ -21,7 +21,7 @@ class CemeteryPlotListSerializer(CemeteryPlotSerializer):
     status = serializers.CharField(source='get_status_display', read_only=True, label="Статус")
     cemetery = serializers.CharField(source='cemetery.name', read_only=True, label="Кладбище")
 
-    deceased = serializers.StringRelatedField(source='cemetery_plot_set', many=True)
+    deceased = serializers.StringRelatedField(source='cemetery_plot_set', label='Усопшие', many=True)
 
 
     class Meta:
