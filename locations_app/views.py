@@ -111,6 +111,18 @@ class CemeteryPlotViewSet(CustomModelViewSet):
     def public(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
+    def deceased_count(self, request, *args, **kwargs):
+        deceased_counts = {}
+        queryset = CemeteryPlot.objects.annotate(deceased_count=models.Count('cemetery_plot_set'))
+        for entry in queryset:
+            count = entry.deceased_count
+            if count in deceased_counts:
+                deceased_counts[count] += 1
+            else:
+                deceased_counts[count] = 1
+        return Response(deceased_counts)
+
 
 class LargePagination(PageNumberPagination):
     page_size = 300
