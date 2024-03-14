@@ -19,6 +19,7 @@ from locations_app.serializers.cemetery_plot_serializers import (CemeteryPlotSer
 from locations_app.serializers.cemetery_serializers import CemeterySerializer, CemeteryListSerializer, \
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer
 from django.db.models import Count, Case, When, IntegerField, Q
+from django.db import models
 
 
 # Create your views here.
