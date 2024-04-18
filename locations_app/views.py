@@ -39,7 +39,13 @@ class CemeteryViewSet(CustomModelViewSet):
         'filter': CemeteryFilterSerializer,
     }
 
-    permission_classes = [permissions.AllowAny]
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'public', 'map', 'filter_map', 'filter', 'deceased_count']:
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [IsAdminRedact]
+
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         queryset = Cemetery.objects.annotate(
@@ -93,7 +99,13 @@ class CemeteryPlotViewSet(CustomModelViewSet):
         'filter': CemeteryPlotFilterSerializers
     }
 
-    permission_classes = [permissions.AllowAny]
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'public', 'filter', 'deceased_count']:
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [IsAdminRedact]
+
+        return [permission() for permission in permission_classes]
 
     def list(self, request, **kwargs):
         queryset = self.filter_queryset(self.get_queryset()).order_by('-id')
