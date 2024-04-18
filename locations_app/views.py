@@ -20,6 +20,7 @@ from locations_app.serializers.cemetery_serializers import CemeterySerializer, C
     CemeteryCreateSerializer, CemeteryRetrieveSerializer, CemeteryUpdateSerializer, CemeteryMapSerializer
 from django.db.models import Count, Case, When, IntegerField, Q
 from django.db import models
+from users_app.admin_permissions import *
 
 
 # Create your views here.
@@ -40,7 +41,9 @@ class CemeteryViewSet(CustomModelViewSet):
     }
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'public', 'map', 'filter_map', 'filter', 'deceased_count']:
+        if self.action in ['list', 'retrieve', 'map', 'filter_map', 'filter', 'deceased_count']:
+            permission_classes = [IsAdmin]
+        elif self.action in ['public', ]:
             permission_classes = [permissions.AllowAny]
         else:
             permission_classes = [IsAdminRedact]
