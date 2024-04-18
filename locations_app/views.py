@@ -41,7 +41,7 @@ class CemeteryViewSet(CustomModelViewSet):
     }
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'map', 'filter_map', 'filter', 'deceased_count']:
+        if self.action in ['list', 'retrieve', 'map', 'filter_map', 'filter', 'count']:
             permission_classes = [IsAdmin]
         elif self.action in ['public', ]:
             permission_classes = [permissions.AllowAny]
@@ -103,7 +103,9 @@ class CemeteryPlotViewSet(CustomModelViewSet):
     }
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'public', 'filter', 'deceased_count']:
+        if self.action in ['list', 'retrieve', 'filter', 'deceased_count']:
+            permission_classes = [IsAdmin]
+        elif self.action in ['public', ]:
             permission_classes = [permissions.AllowAny]
         else:
             permission_classes = [IsAdminRedact]
