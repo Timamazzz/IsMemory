@@ -3,7 +3,6 @@ from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 
-from users_app.admin_permissions import HasDashboardAdminGroupPermission
 from IsMemory.helpers.CustomModelViewSet import CustomModelViewSet
 from IsMemory.helpers.CustomOptionsMetadata import CustomOptionsMetadata
 from deceased_app.filters import DeceasedFilter, DeceasedFilterSerializer
