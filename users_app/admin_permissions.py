@@ -5,8 +5,8 @@ class IsAdminRedact(permissions.BasePermission):
 
     def has_permission(self, request, view):
         print('IsAdminRedact')
-        print('request.user', request.user.all())
-        print('request.user.groups', request.user.groups)
+        print('request.user', request.user)
+        print('request.user.groups', request.user.groups.all())
         return request.user.groups.filter(name='dashboard-admin-redact').exists()
 
 
