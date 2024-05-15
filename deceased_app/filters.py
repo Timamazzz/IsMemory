@@ -6,8 +6,8 @@ from locations_app.models import Cemetery
 
 
 class DeceasedFilter(filters.FilterSet):
-    first_name = filters.CharFilter(lookup_expr='icontains', label='Имя')
     last_name = filters.CharFilter(lookup_expr='icontains', label='Фамилия')
+    first_name = filters.CharFilter(lookup_expr='icontains', label='Имя')
     patronymic = filters.CharFilter(lookup_expr='icontains', label='Отчество')
 
     birth_date = filters.NumberFilter(field_name='birth_date', lookup_expr='year__lte', label='Год рождения до')
@@ -25,8 +25,8 @@ class DeceasedFilter(filters.FilterSet):
 
 
 class DeceasedFilterSerializer(serializers.Serializer):
-    first_name = serializers.CharField(required=False, label='Имя')
     last_name = serializers.CharField(required=False, label='Фамилия')
+    first_name = serializers.CharField(required=False, label='Имя')
     patronymic = serializers.CharField(required=False, label='Отчество')
 
     birth_date = serializers.DateField(required=False, label='Год рождения до')
