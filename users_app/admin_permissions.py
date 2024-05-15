@@ -21,3 +21,4 @@ class IsAdmin(permissions.BasePermission):
         print('dashboard-admin', request.user.groups.filter(name='dashboard-admin'))
         print('bool', request.user.groups.filter(name='dashboard-admin').exists())
         return request.user.groups.filter(name='dashboard-admin').exists()
+
