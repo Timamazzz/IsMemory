@@ -39,4 +39,5 @@ class DeceasedFilterSerializer(serializers.Serializer):
 
     class Meta:
         model = Deceased
-        fields = ['last_name', 'first_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot', 'cemetery_plot_number']
+        fields = ['last_name', 'first_name', 'patronymic', 'birth_date', 'death_date', 'cemetery_plot',
+                  'cemetery_plot_number']
