@@ -18,7 +18,7 @@ class Command(BaseCommand):
                         if isinstance(first_point, list) and len(first_point) == 2:
                             lat, lon = first_point
                             new_coordinates = [lat - 0.000009, lon - 0.000009]
-                            plot.coordinates = [new_coordinates]
+                            plot.coordinates = new_coordinates
                             plot.save()
                             updated_plots += 1
                             print('plot', plot.id)
